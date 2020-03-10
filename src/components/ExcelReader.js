@@ -7,10 +7,13 @@ import { make_cols } from "./MakeColumns.js";
 import { InputLabel } from "@material-ui/core";
 import { Input, Table, Button, Select } from "antd";
 import "antd/dist/antd.css";
+import getAction from '../../src/redux/action';
+import {connect} from 'react-redux'
+
 const { Column } = Table;
 const { TextArea } = Input;
 const { Option } = Select;
-export default class ExcelReader extends React.Component {
+export class ExcelReader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -140,9 +143,33 @@ export default class ExcelReader extends React.Component {
             aria-label="maximum height"
             placeholder="Tin nhắn"
           />
-          <Button type="primary">Send</Button>
+          <Button type="primary"
+            onClick = {()=>{
+              let customers = this.state.data
+                // this.state.data.map(vl => {
+                //   customers.push(vl.email)
+                // })
+                console.log(customers)
+                this.props.sendMail({subject: 'test', text :'test noi dung',listCustomers: customers, filename: [], buffer: null,  })
+            }}
+          >Send</Button>
         </div>
       </div>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return{
+      
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return{
+      sendMail: (mail) => {
+          dispatch(getAction.action.sendMail(mail));
+      },
+  }
+}
+export default connect( mapStateToProps, mapDispatchToProps )( ExcelReader )
