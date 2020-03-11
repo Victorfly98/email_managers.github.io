@@ -34,7 +34,10 @@ class ExcelReader extends React.Component {
       value: "",
       filter: [],
       selected: "all",
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      subject: "",
+      message: "",
+      showEmail: []
       // groups: {}
     };
     this.handleChange = this.handleChange.bind(this);
@@ -63,7 +66,7 @@ class ExcelReader extends React.Component {
       });
       const result = _.map(data, e => {
         return {
-          key: e["Email"],
+          key: {email: e["Email"], type: e["Loại KH"]},
           name: e["Họ và tên"],
           type: e["Loại KH"],
           stt: e["STT"],
@@ -89,6 +92,12 @@ class ExcelReader extends React.Component {
   }
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
+
+    this.state.showEmail= []
+    selectedRowKeys.map(e => {
+      this.state.showEmail.push(e.email)
+    })
+
     console.log("selectedRowKeys changed: ", selectedRowKeys);
   };
   render() {
@@ -158,19 +167,22 @@ class ExcelReader extends React.Component {
           <TextArea
             aria-label="maximum height"
             placeholder="Người nhận"
-            value={this.state.selectedRowKeys}
+            value={this.state.showEmail}
           />
-          <Input placeholder="Chủ đề"></Input>
+          <Input placeholder="Chủ đề" onChange={e => this.setState({subject: e.target.value})}></Input>
           <TextArea
             aria-label="maximum height"
             placeholder="Tin nhắn"
             // value={this.state.selectedRowKeys}
+            onChange={e => this.setState({message: e.target.value})}
           />
           <Button type="primary"
             onClick = {()=>{
               let customers = this.state.selectedRowKeys
-                console.log(customers)
-                this.props.sendMail({subject: 'test', text :'test noi dung',listCustomers: customers, filename: [], buffer: null,  })
+              //console.log(customers)
+              let subject = this.state.subject
+              let message = this.state.message
+              this.props.sendMail({subject: subject, text :message,listCustomers: customers, filename: [], buffer: null,  })
             }}
           >Send</Button>
         </div>
