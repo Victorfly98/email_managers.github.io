@@ -66,7 +66,7 @@ class ExcelReader extends React.Component {
       });
       const result = _.map(data, e => {
         return {
-          key: {email: e["Email"], type: e["Loại KH"]},
+          key: {Email: e["Email"], type_id: e["Loại KH"]},
           name: e["Họ và tên"],
           type: e["Loại KH"],
           stt: e["STT"],
@@ -81,6 +81,7 @@ class ExcelReader extends React.Component {
     } else {
       reader.readAsArrayBuffer(this.state.file);
     }
+  //  console.log('file:  ',this.state.file.__proto__.constructor.__proto__.prototype.arrayBuffer)
   }
   // onChange data select
   onChange(value) {
@@ -95,7 +96,7 @@ class ExcelReader extends React.Component {
 
     this.state.showEmail= []
     selectedRowKeys.map(e => {
-      this.state.showEmail.push(e.email)
+      this.state.showEmail.push(e.Email)
     })
 
     console.log("selectedRowKeys changed: ", selectedRowKeys);
@@ -182,7 +183,7 @@ class ExcelReader extends React.Component {
               //console.log(customers)
               let subject = this.state.subject
               let message = this.state.message
-              this.props.sendMail({subject: subject, text :message,listCustomers: customers, filename: [], buffer: null,  })
+              this.props.sendMail({subject: subject, text :message,list_customers: customers, file_name: ['test_mail - Copy'], buffer: [[12,15,36]]})
             }}
           >Send</Button>
         </div>
