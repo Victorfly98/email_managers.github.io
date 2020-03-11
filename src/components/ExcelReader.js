@@ -3,25 +3,38 @@ import React from "react";
 import _ from "lodash";
 import { SheetJSFT } from "./types.js";
 import XLSX from "xlsx";
-import { make_cols } from "./MakeColumns.js";
 import { InputLabel } from "@material-ui/core";
 import { Input, Table, Button, Select } from "antd";
 import "antd/dist/antd.css";
 import getAction from '../../src/redux/action';
 import {connect} from 'react-redux'
-
-const { Column } = Table;
-const { TextArea } = Input;
 const { Option } = Select;
-export class ExcelReader extends React.Component {
+/* eslint-disable no-useless-constructor */
+// import { make_cols } from "./MakeColumns.js";
+const { TextArea } = Input;
+const columns = [
+  {
+    title: "Email",
+    dataIndex: "email"
+  },
+  {
+    title: "Họ và tên",
+    dataIndex: "name"
+  },
+  {
+    title: "Loại khách hàng",
+    dataIndex: "type"
+  }
+];
+class ExcelReader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      cols: [],
       value: "",
       filter: [],
-      selected: 'all'
+      selected: "all",
+      selectedRowKeys: []
       // groups: {}
     };
     this.handleChange = this.handleChange.bind(this);
@@ -50,18 +63,15 @@ export class ExcelReader extends React.Component {
       });
       const result = _.map(data, e => {
         return {
+          key: e["Email"],
           name: e["Họ và tên"],
           type: e["Loại KH"],
           stt: e["STT"],
           email: e["Email"]
         };
       });
-      // console.log(result, "result");
-
       /* Update state */
-      this.setState({ data: result, cols: make_cols(ws["!ref"]) }, () => {
-        console.log(JSON.stringify(this.state.data, null, 2));
-      });
+      this.setState({ data: result });
     };
     if (rABS) {
       reader.readAsBinaryString(this.state.file);
@@ -71,39 +81,48 @@ export class ExcelReader extends React.Component {
   }
   // onChange data select
   onChange(value) {
-    this.setState({...this.state, selected: value, filter: _.filter(this.state.data, (e) => e.type === value)});
+    this.setState({
+      ...this.state,
+      selected: value,
+      filter: _.filter(this.state.data, e => e.type === value)
+    });
   }
-
+  onSelectChange = selectedRowKeys => {
+    this.setState({ selectedRowKeys });
+    console.log("selectedRowKeys changed: ", selectedRowKeys);
+  };
   render() {
-    console.log("data: ", this.state.data);
+    // console.log("data: ", this.state.data);
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
-    console.log("groups: ", groups);
+    const { selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    };
     return (
       <div>
-        <form className="form-inline">
-          <div className="excel_reader">
-            <InputLabel />
-            GỬI MAIL
-            <div className="chose_file">
-              Chọn file chứa thông tin khách hàng:
-              <Input
-                type="file"
-                className="form-control"
-                id="file"
-                accept={SheetJSFT}
-                onChange={this.handleChange}
-              />
-            </div>
-            <Button
-              disabled={!this.state.file}
-              type="submit"
-              className="btn_import"
-              onClick={this.handleFile}
-            >
-              Import
-            </Button>
+        <div className="excel_reader">
+          <InputLabel />
+          GỬI MAIL
+          <div className="chose_file">
+            Chọn file chứa thông tin khách hàng:
+            <Input
+              type="file"
+              className="form-control"
+              id="file"
+              accept={SheetJSFT}
+              onChange={this.handleChange}
+            />
           </div>
-        </form>
+          <Button
+            disabled={!this.state.file}
+            type="submit"
+            className="btn_import"
+            onClick={this.handleFile}
+          >
+            Import
+          </Button>
+        </div>
         <InputLabel style={{ marginTop: 20 }}>Loại khách hàng: </InputLabel>
         <Select
           style={{ width: 170, textAlign: "center" }}
@@ -119,36 +138,37 @@ export class ExcelReader extends React.Component {
             );
           })}
         </Select>
-        {
-          this.state.selected === 'all' ?
-          <Table dataSource={this.state.data}>
-          <Column title="STT" dataIndex="stt" key="stt" />
-          <Column title="Email" dataIndex="email" key="email" />
-          <Column title="Họ và tên" dataIndex="name" key="name" />
-          <Column title="Loại Khách Hàng" dataIndex="type" key="type" />
-        </Table>
-          :
-          <Table dataSource={this.state.filter}>
-          <Column title="STT" dataIndex="stt" key="stt" />
-          <Column title="Email" dataIndex="email" key="email" />
-          <Column title="Họ và tên" dataIndex="name" key="name" />
-          <Column title="Loại Khách Hàng" dataIndex="type" key="type" />
-        </Table>
-        }
-        <div className="content_email">
-          <Input placeholder="Người nhận"></Input>
+        {this.state.selected === "all" ? (
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={this.state.data}
+          ></Table>
+        ) : (
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={this.state.filter}
+          ></Table>
+        )}
+        <div
+          className="content_email"
+          style={{ height: 400, width: 600, alignItems: "right" }}
+        >
+          <TextArea
+            aria-label="maximum height"
+            placeholder="Người nhận"
+            value={this.state.selectedRowKeys}
+          />
           <Input placeholder="Chủ đề"></Input>
           <TextArea
-            rowsMax={6}
             aria-label="maximum height"
             placeholder="Tin nhắn"
+            // value={this.state.selectedRowKeys}
           />
           <Button type="primary"
             onClick = {()=>{
-              let customers = this.state.data
-                // this.state.data.map(vl => {
-                //   customers.push(vl.email)
-                // })
+              let customers = this.state.selectedRowKeys
                 console.log(customers)
                 this.props.sendMail({subject: 'test', text :'test noi dung',listCustomers: customers, filename: [], buffer: null,  })
             }}
