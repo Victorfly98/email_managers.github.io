@@ -24,6 +24,10 @@ export function* saga_send_mail(action){
         console.log(res)
     } catch(error) {
         console.log(error)
+        notification.error({
+            message: 'Gửi email thất bại',
+            description: 'Có lỗi trong quá trình gửi email',
+        })
     }
 }
 

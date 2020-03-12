@@ -4,7 +4,8 @@ import _ from "lodash";
 import { SheetJSFT } from "./types.js";
 import XLSX from "xlsx";
 import { InputLabel } from "@material-ui/core";
-import { Input, Table, Button, Select } from "antd";
+import { Input, Table, Button, Select, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import "antd/dist/antd.css";
 import getAction from '../../src/redux/action';
 import {connect} from 'react-redux'
@@ -26,6 +27,7 @@ const columns = [
     dataIndex: "type"
   }
 ];
+
 class ExcelReader extends React.Component {
   constructor(props) {
     super(props);
@@ -37,17 +39,27 @@ class ExcelReader extends React.Component {
       selectedRowKeys: [],
       subject: "",
       message: "",
-      showEmail: []
+      showEmail: [],
+      fileList: [],
+      buffer: []
       // groups: {}
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleFile = this.handleFile.bind(this);
     this.onChange = this.onChange.bind(this);
   }
+
   //click select file
   handleChange(e) {
     const files = e.target.files;
+    console.log('e: ',e.target.files)
     if (files && files[0]) this.setState({ file: files[0] });
+
+    this.state.fileList.map(vl => {
+      var file = new File(vl)
+      //  console.log(blob)
+        this.transformFile(file)
+      })
   }
   handleFile(file /*:File*/) {
     /* Boilerplate to set up FileReader */
@@ -81,8 +93,32 @@ class ExcelReader extends React.Component {
     } else {
       reader.readAsArrayBuffer(this.state.file);
     }
-  //  console.log('file:  ',this.state.file.__proto__.constructor.__proto__.prototype.arrayBuffer)
+    // this.setState({buffer: reader})
+  //  console.log('filessssss: ',this.state.file.name)
   }
+
+  // function select multi file
+  handleChangeFile = info => {
+    let fileList = [...info.fileList];
+    fileList = fileList.map(file => {
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = file.response.url;
+      }
+      return file;
+    });
+    this.setState({ fileList });
+  };
+
+  transformFile = file => {
+    return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    this.setState({buffer: reader.result})
+    console.log('data: ',reader)
+    })
+  }
+
   // onChange data select
   onChange(value) {
     this.setState({
@@ -109,6 +145,14 @@ class ExcelReader extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange
     };
+    // object select multi file
+    const itemFile = {
+      action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      onChange: this.handleChangeFile,
+      multiple: true,
+    //  transformFile: this.transformFile
+    };
+
     return (
       <div>
         <div className="excel_reader">
@@ -163,7 +207,7 @@ class ExcelReader extends React.Component {
         )}
         <div
           className="content_email"
-          style={{ height: 400, width: 600, alignItems: "right" }}
+          style={{ height: 400, width: 600, alignItems: "right", marginLeft: 5 }}
         >
           <TextArea
             aria-label="maximum height"
@@ -177,13 +221,26 @@ class ExcelReader extends React.Component {
             // value={this.state.selectedRowKeys}
             onChange={e => this.setState({message: e.target.value})}
           />
+          
+          {/* uploadfile */}
+          <div style={{textAlign: 'left'}}>
+          <Upload {...itemFile} fileList={this.state.fileList} >
+            <Button>
+              <UploadOutlined /> Upload
+            </Button>
+          </Upload>
+          </div>
+
           <Button type="primary"
             onClick = {()=>{
+              console.log('item:  ',this.state.fileList)
               let customers = this.state.selectedRowKeys
               //console.log(customers)
               let subject = this.state.subject
               let message = this.state.message
-              this.props.sendMail({subject: subject, text :message,list_customers: customers, file_name: ['test_mail - Copy'], buffer: [[12,15,36]]})
+              let buffer = this.state.buffer.result
+              console.log(buffer)
+              this.props.sendMail({subject: subject, text :message,list_customers: customers, file_name: ['test_mail - Copy'], buffer: buffer})
             }}
           >Send</Button>
         </div>
