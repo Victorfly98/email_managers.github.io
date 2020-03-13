@@ -1,17 +1,15 @@
-/* eslint-disable no-useless-constructor */
 import React from "react";
 import _ from "lodash";
 import { SheetJSFT } from "./types.js";
 import XLSX from "xlsx";
 import { InputLabel } from "@material-ui/core";
-import { Input, Table, Button, Select, Upload } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { Input, Table, Button, Select, Upload, Form } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
-import getAction from '../../src/redux/action';
-import { connect } from 'react-redux'
+import getAction from "../../src/redux/action";
+import { connect } from "react-redux";
 const { Option } = Select;
-/* eslint-disable no-useless-constructor */
-// import { make_cols } from "./MakeColumns.js";
+
 const { TextArea } = Input;
 const columns = [
   {
@@ -43,7 +41,6 @@ class ExcelReader extends React.Component {
       fileList: [],
       buffer: [],
       fileName: []
-      // groups: {}
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleFile = this.handleFile.bind(this);
@@ -53,12 +50,8 @@ class ExcelReader extends React.Component {
   //click select file
   handleChange(e) {
     const files = e.target.files;
-    console.log('e: ', e.target.files)
+    console.log("e: ", e.target.files);
     if (files && files[0]) this.setState({ file: files[0] });
-
-    // this.state.fileList.map(vl => {
-    //     this.transformFile(vl)
-    //   })
   }
   handleFile(file /*:File*/) {
     /* Boilerplate to set up FileReader */
@@ -115,8 +108,8 @@ class ExcelReader extends React.Component {
     reader.readAsArrayBuffer(file);
     //    this.setState({buffer: reader.result})
     //    console.log('data: ',reader)
-    return reader
-  }
+    return reader;
+  };
 
   // onChange data select
   onChange(value) {
@@ -129,28 +122,33 @@ class ExcelReader extends React.Component {
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
 
-    this.state.showEmail = []
+    this.state.showEmail = [];
     selectedRowKeys.map(e => {
-      this.state.showEmail.push(e.Email)
-    })
-
+      this.state.showEmail.push(e.Email);
+    });
+    // this.setState({showEmail: selectedRowKeys})
     console.log("selectedRowKeys changed: ", selectedRowKeys);
+    console.log("showEmail: ", this.state.showEmail);
   };
   // function send mail
   onSendMail = () => {
-    console.log('item:  ', this.state.fileList)
-    let customers = this.state.selectedRowKeys
-    //console.log(customers)
-    let subject = this.state.subject
-    let message = this.state.message
+    console.log("item:  ", this.state.fileList);
+    let customers = this.state.selectedRowKeys;
+    let subject = this.state.subject;
+    let message = this.state.message;
     this.state.fileList.map(vl => {
-      this.state.buffer.push(this.transformFile(vl.originFileObj))
-      this.state.fileName.push(vl.name)
-    })
-    this.props.sendMail({ subject: subject, text: message, list_customers: customers, file_name: this.state.fileName, buffer: this.state.buffer })
-  }
+      this.state.buffer.push(this.transformFile(vl.originFileObj));
+      this.state.fileName.push(vl.name);
+    });
+    this.props.sendMail({
+      subject: subject,
+      text: message,
+      list_customers: customers,
+      file_name: this.state.fileName,
+      buffer: this.state.buffer
+    });
+  };
   render() {
-    // console.log("data: ", this.state.data);
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
     const { selectedRowKeys } = this.state;
     const rowSelection = {
@@ -159,19 +157,20 @@ class ExcelReader extends React.Component {
     };
     // object select multi file
     const itemFile = {
-      action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
       onChange: this.handleChangeFile,
-      multiple: true,
+      multiple: true
       //  transformFile: this.transformFile
     };
 
     return (
-      <div>
+      <Form>
         <div className="excel_reader">
-          <InputLabel />
           GỬI MAIL
-          <div className="chose_file">
-            Chọn file chứa thông tin khách hàng:
+          <Form.Item
+            label="Chọn file chứa thông tin khách hàng:"
+            name="chose_file"
+          >
             <Input
               type="file"
               className="form-control"
@@ -179,7 +178,7 @@ class ExcelReader extends React.Component {
               accept={SheetJSFT}
               onChange={this.handleChange}
             />
-          </div>
+          </Form.Item>
           <Button
             disabled={!this.state.file}
             type="submit"
@@ -211,22 +210,32 @@ class ExcelReader extends React.Component {
             dataSource={this.state.data}
           ></Table>
         ) : (
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={this.state.filter}
-            ></Table>
-          )}
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={this.state.filter}
+          ></Table>
+        )}
         <div
           className="content_email"
-          style={{ height: 400, width: 600, alignItems: "right", marginLeft: 5 }}
+          style={{
+            height: 400,
+            width: 600,
+            marginLeft: 5
+          }}
         >
-          <TextArea
+          <Select
+            style={{ width: "100%", textAlign: "left" }}
+            mode="multiple"
             aria-label="maximum height"
             placeholder="Người nhận"
             value={this.state.showEmail}
+            onChange={this.onSelectChange}
           />
-          <Input placeholder="Chủ đề" onChange={e => this.setState({ subject: e.target.value })}></Input>
+          <Input
+            placeholder="Chủ đề"
+            onChange={e => this.setState({ subject: e.target.value })}
+          ></Input>
           <TextArea
             aria-label="maximum height"
             placeholder="Tin nhắn"
@@ -235,34 +244,33 @@ class ExcelReader extends React.Component {
           />
 
           {/* uploadfile */}
-          <div style={{ textAlign: 'left' }}>
-            <Upload {...itemFile} fileList={this.state.fileList} >
+          <div style={{ textAlign: "left" }}>
+            <Upload {...itemFile} fileList={this.state.fileList}>
               <Button>
                 <UploadOutlined /> Upload
-            </Button>
+              </Button>
             </Upload>
           </div>
-
-          <Button type="primary"
-            onClick={this.onSendMail}
-          >Send</Button>
+          <div style={{ textAlign: "right" }}>
+            <Button type="primary" onClick={this.onSendMail}>
+              Send
+            </Button>
+          </div>
         </div>
-      </div>
+      </Form>
     );
   }
 }
 
 const mapStateToProps = state => {
-  return {
-
-  }
-}
+  return {};
+};
 
 const mapDispatchToProps = dispatch => {
   return {
-    sendMail: (mail) => {
+    sendMail: mail => {
       dispatch(getAction.action.sendMail(mail));
-    },
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(ExcelReader)
+    }
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ExcelReader);
