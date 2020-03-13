@@ -1,12 +1,12 @@
 import React from "react";
 import _ from "lodash";
-import { SheetJSFT } from "./types.js";
+import { SheetJSFT } from "../readExcelFile/types.js";
 import XLSX from "xlsx";
 import { InputLabel } from "@material-ui/core";
 import { Input, Table, Button, Select, Upload, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
-import getAction from "../../src/redux/action";
+import getAction from "../../redux/action";
 import { connect } from "react-redux";
 const { Option } = Select;
 
@@ -104,11 +104,19 @@ class ExcelReader extends React.Component {
 
   // transform file to array buffer
   transformFile = file => {
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    //    this.setState({buffer: reader.result})
-    //    console.log('data: ',reader)
-    return reader;
+    const temporaryFileReader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      temporaryFileReader.onerror = () => {
+        temporaryFileReader.abort();
+        reject(new DOMException("Problem parsing input file."));
+      };
+
+      temporaryFileReader.onload = () => {
+        resolve(temporaryFileReader.result);
+      };
+      temporaryFileReader.readAsArrayBuffer(file);
+    });
   };
 
   // onChange data select
@@ -120,16 +128,29 @@ class ExcelReader extends React.Component {
     });
   }
   onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys });
-
+    const x = [];
+    const y = this.state.selectedRowKeys;
     this.state.showEmail = [];
     selectedRowKeys.map(e => {
+      if (e.type_id === undefined) {
+        let type;
+        let index = y.findIndex(vl => vl.Email === e)
+        if (index === -1) { type = 'a'; console.log('true') }
+        else { type = y[index].type_id; console.log('false') }
+        e = {
+          Email: e,
+          type_id: type
+        }
+      }
+      x.push(e)
       this.state.showEmail.push(e.Email);
     });
+    this.setState({ selectedRowKeys: x });
     // this.setState({showEmail: selectedRowKeys})
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
+    console.log("selectedRowKeys changed: ", x);
     console.log("showEmail: ", this.state.showEmail);
   };
+
   // function send mail
   onSendMail = () => {
     console.log("item:  ", this.state.fileList);
@@ -210,12 +231,12 @@ class ExcelReader extends React.Component {
             dataSource={this.state.data}
           ></Table>
         ) : (
-          <Table
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={this.state.filter}
-          ></Table>
-        )}
+            <Table
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={this.state.filter}
+            ></Table>
+          )}
         <div
           className="content_email"
           style={{
@@ -226,7 +247,7 @@ class ExcelReader extends React.Component {
         >
           <Select
             style={{ width: "100%", textAlign: "left" }}
-            mode="multiple"
+            mode="tags"
             aria-label="maximum height"
             placeholder="Người nhận"
             value={this.state.showEmail}
