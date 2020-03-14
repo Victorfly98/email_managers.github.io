@@ -103,7 +103,7 @@ class ExcelReader extends React.Component {
     buffer = []
     fileList.map( vl => {
       this.transformFile(vl.originFileObj).then( function(v) {
-        buffer.push(v);
+        buffer.push(new Uint8Array(v));
       //  console.log('v: ',v); // 1
       });
     });
@@ -120,7 +120,7 @@ class ExcelReader extends React.Component {
         temporaryFileReader.abort();
         reject(new DOMException("Problem parsing input file."));
       };
-      temporaryFileReader.readAsBinaryString(file);
+      temporaryFileReader.readAsArrayBuffer(file);
       temporaryFileReader.onload = async () => {
         resolve(temporaryFileReader.result);
       };
