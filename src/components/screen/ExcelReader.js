@@ -91,15 +91,23 @@ class ExcelReader extends React.Component {
 
   // function select multi file
   handleChangeFile = info => {
-    let fileList = [...info.fileList];
-    fileList = fileList.map(file => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
-      }
-      return file;
-    });
-    this.setState({ fileList });
+    // fileList = fileList.map(file => {
+    //   if (file.response) {
+    //     // Component will show file.url as link
+    //     file.url = file.response.url;
+    //   }
+    //   return file;
+    // });
+    // let {buffer}  = this.state
+    // buffer = []
+    // fileList.map(v1 =>{
+    //   this.transformFile(v1.originFileObj).then(function(v){
+    //     buffer.push(new Int8Array(v))
+    //   });
+    // });
+
+    this.setState({ ...this.state, fileList: [...info.fileList] });
+    // this.setState({ buffer });
   };
 
   // transform file to array buffer
@@ -112,11 +120,14 @@ class ExcelReader extends React.Component {
         reject(new DOMException("Problem parsing input file."));
       };
 
-      temporaryFileReader.onload = () => {
+      temporaryFileReader.readAsArrayBuffer(file);
+
+      temporaryFileReader.onload = async() => {
         resolve(temporaryFileReader.result);
       };
-      temporaryFileReader.readAsArrayBuffer(file);
+      
     });
+
   };
 
   // onChange data select
@@ -153,21 +164,27 @@ class ExcelReader extends React.Component {
 
   // function send mail
   onSendMail = () => {
-    console.log("item:  ", this.state.fileList);
     let customers = this.state.selectedRowKeys;
     let subject = this.state.subject;
     let message = this.state.message;
-    this.state.fileList.map(vl => {
-      this.state.buffer.push(this.transformFile(vl.originFileObj));
-      this.state.fileName.push(vl.name);
+    this.state.fileList.map(file => {
+      //this.state.buffer.push(this.transformFile(vl.originFileObj));
+      this.state.fileName.push(file.name);
     });
-    this.props.sendMail({
-      subject: subject,
-      text: message,
-      list_customers: customers,
-      file_name: this.state.fileName,
-      buffer: this.state.buffer
-    });
+    console.log(this.state, ': this.state')
+    let formData = new FormData()
+    formData.append('subject', subject);
+    formData.append('text', message);
+    formData.append('list_customers', JSON.stringify(customers));
+    console.log(this.state.fileName, ": this.state.fileName")
+    // this.state.fileName.forEach((name) => {
+    //   formData.append('file_name', name);
+    // })
+    this.state.fileList.forEach((file) => {
+      formData.append('files', file.originFileObj, file.name);
+    })
+    console.log(formData, ': formdata')
+    this.props.sendMail(formData);
   };
   render() {
     const groups = Object.keys(_.groupBy(this.state.data, "type"));

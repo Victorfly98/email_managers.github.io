@@ -2,7 +2,11 @@ import axios from 'axios'
 
 export const sendMailAPI = async (obj) => {
     try {
-        const res = await axios.post(`http://192.168.100.94:8888/v1/customers/SendMail/`, { obj })
+        const res = await axios({
+            url: `http://127.0.0.1:8089/v1/customers/SendMail/`,
+            method: 'post',
+            data: obj
+        })
         //console.log(res.data)
         return res
     }

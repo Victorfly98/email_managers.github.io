@@ -4,6 +4,7 @@ const type = {
 
 const action = {
     sendMail: (mail) => {
+        console.log(mail, ':mail')
         return{
             type: type.SEND_MAIL,
             payload: {
