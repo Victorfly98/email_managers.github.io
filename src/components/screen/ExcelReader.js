@@ -99,23 +99,32 @@ class ExcelReader extends React.Component {
       }
       return file;
     });
+    let {buffer} = this.state
+    buffer = []
+    fileList.map( vl => {
+      this.transformFile(vl.originFileObj).then( function(v) {
+        buffer.push(v);
+      //  console.log('v: ',v); // 1
+      });
+    });
     this.setState({ fileList });
+    this.setState({ buffer });
   };
 
   // transform file to array buffer
   transformFile = file => {
     const temporaryFileReader = new FileReader();
 
-    return new Promise((resolve, reject) => {
+    return new Promise( (resolve, reject) => {
       temporaryFileReader.onerror = () => {
         temporaryFileReader.abort();
         reject(new DOMException("Problem parsing input file."));
       };
-
-      temporaryFileReader.onload = () => {
+      temporaryFileReader.readAsBinaryString(file);
+      temporaryFileReader.onload = async () => {
         resolve(temporaryFileReader.result);
       };
-      temporaryFileReader.readAsArrayBuffer(file);
+      
     });
   };
 
@@ -153,14 +162,14 @@ class ExcelReader extends React.Component {
 
   // function send mail
   onSendMail = () => {
-    console.log("item:  ", this.state.fileList);
+  //  console.log("item:  ", this.state.fileList);
+    this.state.fileList.map( vl => {
+    //  console.log('x: ',x)
+      this.state.fileName.push(vl.name);
+    });
     let customers = this.state.selectedRowKeys;
     let subject = this.state.subject;
     let message = this.state.message;
-    this.state.fileList.map(vl => {
-      this.state.buffer.push(this.transformFile(vl.originFileObj));
-      this.state.fileName.push(vl.name);
-    });
     this.props.sendMail({
       subject: subject,
       text: message,
@@ -168,6 +177,7 @@ class ExcelReader extends React.Component {
       file_name: this.state.fileName,
       buffer: this.state.buffer
     });
+    this.setState({selectedRowKeys: [], subject: '', message: '', fileList: [], buffer: [], fileName: []})
   };
   render() {
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
@@ -252,16 +262,19 @@ class ExcelReader extends React.Component {
             placeholder="Người nhận"
             value={this.state.showEmail}
             onChange={this.onSelectChange}
+            allowClear
           />
           <Input
             placeholder="Chủ đề"
             onChange={e => this.setState({ subject: e.target.value })}
+            allowClear
           ></Input>
           <TextArea
             aria-label="maximum height"
             placeholder="Tin nhắn"
             // value={this.state.selectedRowKeys}
             onChange={e => this.setState({ message: e.target.value })}
+            allowClear
           />
 
           {/* uploadfile */}

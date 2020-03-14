@@ -5,7 +5,7 @@ import { notification } from "antd";
 
 export function* saga_send_mail(action) {
   try {
-    console.log(action.payload.mail);
+    console.log(action.payload.mail)
     const res = yield call(sendMailAPI, action.payload.mail);
     //console.log(res)
     if (res.status === 200) {
