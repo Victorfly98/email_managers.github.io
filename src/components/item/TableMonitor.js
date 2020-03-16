@@ -143,7 +143,7 @@ export default class EditableTable extends React.Component {
             borderRadius: 16,
             backgroundColor: "#f7e9e9",
             color: "#c02428",
-            marginBottom: "20"
+            marginBottom: 20
           }}
         >
           Remove Selected

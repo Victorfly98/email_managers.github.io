@@ -209,17 +209,17 @@ class ExcelReader extends React.Component {
           name="chose_file"
         >
           <Row>
-            <Col span="9">
+            <Col flex='300px'>
               <Input
                 type="file"
                 className="form-control"
                 id="file"
                 accept={SheetJSFT}
                 onChange={this.handleChange}
-                style={{width: 300}}
+                style={{width: 300, marginRight: 10}}
               />
             </Col>
-            <Col span="15">
+            <Col flex='auto'>
               <Button
                 disabled={!this.state.file}
                 type="submit"
