@@ -167,14 +167,20 @@ class ExcelReader extends React.Component {
     let customers = this.state.Email;
     let subject = this.state.subject;
     let message = this.state.message;
-    this.props.sendMail({
-      subject: subject,
-      text: message,
-      list_customers: customers,
-      file_name: this.state.fileName,
-      buffer: this.state.buffer
-    });
-    this.setState({Email: [], subject: '', message: '', fileList: [], buffer: [], fileName: []})
+    console.log(this.state, ': this.state')
+    let formData = new FormData()
+    formData.append('subject', subject);
+    formData.append('text', message);
+    formData.append('list_customers', JSON.stringify(customers));
+    console.log(this.state.fileName, ": this.state.fileName")
+    // this.state.fileName.forEach((name) => {
+    //   formData.append('file_name', name);
+    // })
+    this.state.fileList.forEach((file) => {
+      formData.append('files', file.originFileObj, file.name);
+    })
+    console.log(formData, ': formdata')
+    this.props.sendMail(formData);
   };
   render() {
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
