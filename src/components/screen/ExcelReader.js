@@ -160,10 +160,10 @@ class ExcelReader extends React.Component {
   // function send mail
   onSendMail = () => {
   //  console.log("item:  ", this.state.fileList);
-    this.state.fileList.map( vl => {
-    //  console.log('x: ',x)
-      this.state.fileName.push(vl.name);
-    });
+    // this.state.fileList.map( vl => {
+    // //  console.log('x: ',x)
+    //   this.state.fileName.push(vl.name);
+    // });
     let customers = this.state.Email;
     let subject = this.state.subject;
     let message = this.state.message;

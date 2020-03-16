@@ -96,6 +96,9 @@ export default class EditableTable extends React.Component {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
+  start = () => {
+    this.setState({ selectedRowKeys: [] });
+  };
 
   render() {
     if (this.state.update < 2) {
@@ -103,7 +106,6 @@ export default class EditableTable extends React.Component {
       this.state.update += 1;
       this.state.columns = this.columns[this.props.type];
     }
-    const { dataSource } = this.state;
     const columns = this.state.columns.map(col => {
       if (!col.editable) {
         return col;
@@ -122,20 +124,20 @@ export default class EditableTable extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange
     };
-    const data = dataSource.map(e => {
+    this.state.dataSource = this.state.dataSource.map(e => {
       return {
         key: e["id"],
-        ...e  
+        ...e
       };
     });
-    console.log(data, "data");
-    this.state.dataSource = data;
-    console.log(dataSource, 'dataSource');
-    
+    const { dataSource } = this.state;
+    console.log(dataSource, "dataSource");
+
     const hasSelected = selectedRowKeys.length > 0;
     return (
       <div>
         <Button
+          onClick={this.start}
           disabled={!hasSelected}
           style={{
             borderRadius: 16,
