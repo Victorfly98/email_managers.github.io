@@ -10,3 +10,14 @@ export const sendMailAPI = async (obj) => {
         return console.log('error: ', error)
     }
 }
+
+export const getMonitorMailAPI = async (obj) => {
+    try {
+        const res = await axios.get(`https://jsonplaceholder.typicode.com/users`)
+        //console.log(res.data)
+        return res.data
+    }
+    catch (error) {
+        return console.log('error: ', error)
+    }
+}

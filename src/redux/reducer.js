@@ -1,7 +1,7 @@
 import actions from './action'
 
 const initialState = {
-
+    monitorEmail: []
 }
 
 const reducer = (state = initialState, action) => {
@@ -10,6 +10,11 @@ const reducer = (state = initialState, action) => {
         case actions.type.SEND_MAIL:
             return {
                 ...state,
+            }
+        case actions.type.UPDATE_STATE:
+            return {
+                ...state,
+                ...action.payload.state
             }
         default:
             return state
