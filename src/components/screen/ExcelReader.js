@@ -37,7 +37,7 @@ class ExcelReader extends React.Component {
       selectedRowKeys: [],
       subject: "",
       message: "",
-      showEmail: [],
+      Email: [],
       fileList: [],
       buffer: [],
       fileName: []
@@ -70,7 +70,7 @@ class ExcelReader extends React.Component {
       });
       const result = _.map(data, e => {
         return {
-          key: { Email: e["Email"], type_id: e["Loại KH"] },
+          key: e["Email"],
           name: e["Họ và tên"],
           type: e["Loại KH"],
           stt: e["STT"],
@@ -137,27 +137,24 @@ class ExcelReader extends React.Component {
     });
   }
   onSelectChange = selectedRowKeys => {
-    const x = [];
-    const y = this.state.selectedRowKeys;
-    this.state.showEmail = [];
+   const y = this.state.data;
+    this.state.Email = [];
     selectedRowKeys.map(e => {
-      if (e.type_id === undefined) {
+      if (e.type === undefined) {
         let type;
-        let index = y.findIndex(vl => vl.Email === e)
+        let index = y.findIndex(vl => vl.email === e)
         if (index === -1) { type = 'a'; console.log('true') }
-        else { type = y[index].type_id; console.log('false') }
+        else { type = y[index].type; console.log('false') }
         e = {
           Email: e,
           type_id: type
         }
       }
-      x.push(e)
-      this.state.showEmail.push(e.Email);
+      this.state.Email.push(e);
     });
-    this.setState({ selectedRowKeys: x });
+    this.setState({ selectedRowKeys });
     // this.setState({showEmail: selectedRowKeys})
-    console.log("selectedRowKeys changed: ", x);
-    console.log("showEmail: ", this.state.showEmail);
+   console.log("showEmail: ", this.state.Email);
   };
 
   // function send mail
@@ -167,7 +164,7 @@ class ExcelReader extends React.Component {
     //  console.log('x: ',x)
       this.state.fileName.push(vl.name);
     });
-    let customers = this.state.selectedRowKeys;
+    let customers = this.state.Email;
     let subject = this.state.subject;
     let message = this.state.message;
     this.props.sendMail({
@@ -177,7 +174,7 @@ class ExcelReader extends React.Component {
       file_name: this.state.fileName,
       buffer: this.state.buffer
     });
-    this.setState({selectedRowKeys: [], subject: '', message: '', fileList: [], buffer: [], fileName: []})
+    this.setState({Email: [], subject: '', message: '', fileList: [], buffer: [], fileName: []})
   };
   render() {
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
@@ -260,7 +257,7 @@ class ExcelReader extends React.Component {
             mode="tags"
             aria-label="maximum height"
             placeholder="Người nhận"
-            value={this.state.showEmail}
+            value={this.state.selectedRowKeys}
             onChange={this.onSelectChange}
             allowClear
           />
