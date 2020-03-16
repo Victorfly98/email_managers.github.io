@@ -21,7 +21,7 @@ class EmailMonitoring extends Component {
                     <TableMonitor {...[this.props.monitor.monitorEmail]} type = '0'></TableMonitor>
                 </TabPane>
                 <TabPane tab="Tab 2" key="2">
-                <TableMonitor {...[this.props.monitor.monitorEmail]} type = '1'></TableMonitor>
+                    <TableMonitor {...[this.props.monitor.monitorEmail]} type = '1'></TableMonitor>
                 </TabPane>
                 <TabPane tab="Tab 3" key="3">
                     <TableMonitor></TableMonitor>
