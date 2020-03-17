@@ -87,6 +87,13 @@ export class TableMonitor extends React.Component {
       selectedRowKeys: [],
     };
   }
+  
+  componentWillReceiveProps(nextprops){
+    console.log('nextprops', nextprops)
+    if(nextprops !== this.props){
+      this.setState({dataSource: nextprops[0]} )
+    }
+  }
 
   handleDelete = id => {
     const dataSource = [...this.state.dataSource];
@@ -112,7 +119,6 @@ export class TableMonitor extends React.Component {
 
   render() {
     if (this.state.update < 2) {
-      this.state.dataSource = this.props[0];
       this.state.update += 1;
     }
     this.state.columns = this.columns[this.props.type];
