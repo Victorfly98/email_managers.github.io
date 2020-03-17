@@ -116,19 +116,7 @@ export default class EditableTable extends React.Component {
       this.state.update += 1;
     }
     this.state.columns = this.columns[this.props.type];
-    const columns = this.state.columns.map(col => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          //  dataIndex: col.dataIndex,
-          title: col.title
-        })
-      };
-    });
+    
     const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -159,8 +147,6 @@ export default class EditableTable extends React.Component {
           Remove Selected
         </Button>
         <Table
-          rowClassName={() => "editable-row"}
-          // bordered
           dataSource={dataSource}
           columns={columns}
           rowSelection={rowSelection}
