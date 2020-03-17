@@ -82,7 +82,8 @@ export default class EditableTable extends React.Component {
       dataSource: [],
       update: 0,
       columns: [],
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      loading: true
     };
   }
 
@@ -97,15 +98,24 @@ export default class EditableTable extends React.Component {
     this.setState({ selectedRowKeys });
   };
   start = () => {
-    this.setState({ selectedRowKeys: [] });
+    let {selectedRowKeys} = this.state;
+    let {dataSource} = this.state;
+    selectedRowKeys.map(id => {
+      dataSource = dataSource.filter(item => item.id !== id)
+    })
+    this.setState({dataSource})
+    console.log(dataSource)
   };
+  componentWillUpdate(){
+    this.state.loading = false ;
+  }
 
   render() {
     if (this.state.update < 2) {
       this.state.dataSource = this.props[0];
       this.state.update += 1;
-      this.state.columns = this.columns[this.props.type];
     }
+    this.state.columns = this.columns[this.props.type];
     const columns = this.state.columns.map(col => {
       if (!col.editable) {
         return col;
@@ -154,6 +164,7 @@ export default class EditableTable extends React.Component {
           dataSource={dataSource}
           columns={columns}
           rowSelection={rowSelection}
+          loading = {this.state.loading}
         />
       </div>
     );
