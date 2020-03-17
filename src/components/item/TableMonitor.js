@@ -1,8 +1,10 @@
 import React from "react";
 import { Table, Popconfirm, Button } from "antd";
+import getAction from "../../redux/action";
+import { connect } from "react-redux";
 // import _ from "lodash";
 
-export default class EditableTable extends React.Component {
+export class TableMonitor extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [
@@ -83,12 +85,12 @@ export default class EditableTable extends React.Component {
       update: 0,
       columns: [],
       selectedRowKeys: [],
-      loading: true
     };
   }
 
   handleDelete = id => {
     const dataSource = [...this.state.dataSource];
+    this.props.deleteMail(id)
     this.setState({
       dataSource: dataSource.filter(item => item.id !== id)
     });
@@ -101,14 +103,12 @@ export default class EditableTable extends React.Component {
     let {selectedRowKeys} = this.state;
     let {dataSource} = this.state;
     selectedRowKeys.map(id => {
+      this.props.deleteMail(id)
       dataSource = dataSource.filter(item => item.id !== id)
     })
     this.setState({dataSource})
     console.log(dataSource)
   };
-  componentWillUpdate(){
-    this.state.loading = false ;
-  }
 
   render() {
     if (this.state.update < 2) {
@@ -148,11 +148,23 @@ export default class EditableTable extends React.Component {
         </Button>
         <Table
           dataSource={dataSource}
-          columns={columns}
+          columns={this.state.columns}
           rowSelection={rowSelection}
-          loading = {this.state.loading}
         />
       </div>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    deleteMail: id => {
+      dispatch(getAction.action.deleteMonitorEmail(id));
+    }
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(TableMonitor);

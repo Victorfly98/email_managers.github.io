@@ -25,3 +25,14 @@ export const getMonitorMailAPI = async (obj) => {
         return console.log('error: ', error)
     }
 }
+
+export const deleteMonitorMailAPI = async (id) => {
+    try {
+        const res = await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
+        //console.log(res.data)
+        return res
+    }
+    catch (error) {
+        return console.log('error: ', error)
+    }
+}

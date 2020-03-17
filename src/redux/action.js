@@ -1,7 +1,8 @@
 const type = {
     SEND_MAIL: 'SEND_MAIL',
     GET_MONITOR_EMAIL: 'GET_MONITOR_EMAIL',
-    UPDATE_STATE: 'UPDATE_STATE'
+    UPDATE_STATE: 'UPDATE_STATE',
+    DELETE_MONITOR_EMAIL: 'DELETE_MONITOR_EMAIL'
 }
 
 const action = {
@@ -18,6 +19,14 @@ const action = {
         return {
             type: type.GET_MONITOR_EMAIL,
             payload: {}
+        }
+    },
+    deleteMonitorEmail: (id) => {
+        return {
+            type: type.DELETE_MONITOR_EMAIL,
+            payload: {
+                id
+            }
         }
     },
     updateState: (state) => {

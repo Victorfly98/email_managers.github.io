@@ -1,5 +1,5 @@
 import actions from "./action";
-import { sendMailAPI, getMonitorMailAPI } from "../api/sendMailAPI";
+import { sendMailAPI, getMonitorMailAPI, deleteMonitorMailAPI } from "../api/sendMailAPI";
 import { call, takeEvery, put} from "redux-saga/effects";
 import { notification } from "antd";
 
@@ -45,7 +45,17 @@ export function* saga_get_monitor_mail(action) {
   }
 }
 
+export function* saga_delete_monitor_mail(action) {
+  try {
+    const monitor = yield call (deleteMonitorMailAPI, action.payload.id)
+    console.log(monitor)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default function* listen() {
   yield takeEvery(actions.type.SEND_MAIL, saga_send_mail);
   yield takeEvery(actions.type.GET_MONITOR_EMAIL, saga_get_monitor_mail);
+  yield takeEvery(actions.type.DELETE_MONITOR_EMAIL, saga_delete_monitor_mail);
 }

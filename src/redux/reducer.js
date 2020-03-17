@@ -11,6 +11,10 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
             }
+        case actions.type.DELETE_MONITOR_EMAIL:
+            return {
+                ...state,
+            }
         case actions.type.UPDATE_STATE:
             return {
                 ...state,
