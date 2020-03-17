@@ -11,15 +11,15 @@ export class TableMonitor extends React.Component {
       [
         {
           title: "Recipient",
-          dataIndex: "name"
+          dataIndex: "address"
         },
         {
           title: "Timestamp",
-          dataIndex: "username"
+          dataIndex: "create_at"
         },
         {
           title: "Description",
-          dataIndex: "email"
+          dataIndex: "error"
         },
         {
           title: " ",
@@ -78,20 +78,57 @@ export class TableMonitor extends React.Component {
               </Popconfirm>
             ) : null
         }
+      ],
+      [
+        {
+          title: "Recipient",
+          dataIndex: "name"
+        },
+        {
+          title: "Timestamp",
+          dataIndex: "username"
+        },
+        {
+          title: "Description",
+          dataIndex: "email"
+        },
+        {
+          title: " ",
+          dataIndex: "operation",
+          render: (text, record) =>
+            this.state.dataSource.length >= 1 ? (
+              <Popconfirm
+                title="Sure to delete?"
+                onConfirm={() => this.handleDelete(record.id)}
+              >
+                <Button
+                  style={{
+                    borderRadius: 16,
+                    backgroundColor: "#f7e9e9",
+                    color: "#c02428"
+                  }}
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
+            ) : null
+        }
       ]
     ];
     this.state = {
       dataSource: [],
-      update: 0,
       columns: [],
       selectedRowKeys: [],
     };
   }
-  
+  componentDidMount(){
+    this.setState({dataSource: this.props.data, columns: this.columns[this.props.type]} )
+  }
   componentWillReceiveProps(nextprops){
     console.log('nextprops', nextprops)
-    if(nextprops !== this.props){
-      this.setState({dataSource: nextprops[0]} )
+    console.log('type: ', this.props.type)
+    if(nextprops !== this.props ){
+      this.setState({dataSource: nextprops.data, columns: this.columns[nextprops.type]} )
     }
   }
 
@@ -118,11 +155,6 @@ export class TableMonitor extends React.Component {
   };
 
   render() {
-    if (this.state.update < 2) {
-      this.state.update += 1;
-    }
-    this.state.columns = this.columns[this.props.type];
-    
     const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -130,7 +162,7 @@ export class TableMonitor extends React.Component {
     };
     this.state.dataSource = this.state.dataSource.map(e => {
       return {
-        key: e["id"],
+        key: e["address"],
         ...e
       };
     });

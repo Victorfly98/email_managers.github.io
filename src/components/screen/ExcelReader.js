@@ -2,7 +2,6 @@ import React from "react";
 import _ from "lodash";
 import { SheetJSFT } from "../readExcelFile/types.js";
 import XLSX from "xlsx";
-import { InputLabel } from "@material-ui/core";
 import { Input, Table, Button, Select, Upload, Form, Typography, Row, Col } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
@@ -39,7 +38,6 @@ class ExcelReader extends React.Component {
       message: "",
       Email: [],
       fileList: [],
-      buffer: [],
       fileName: []
     };
     this.handleChange = this.handleChange.bind(this);
@@ -99,16 +97,8 @@ class ExcelReader extends React.Component {
       }
       return file;
     });
-    let { buffer } = this.state;
-    buffer = [];
-    fileList.map(vl => {
-      this.transformFile(vl.originFileObj).then(function(v) {
-        buffer.push(new Uint8Array(v));
-        //  console.log('v: ',v); // 1
-      });
-    });
+    
     this.setState({ fileList });
-    this.setState({ buffer });
   };
 
   // transform file to array buffer
@@ -141,17 +131,21 @@ class ExcelReader extends React.Component {
     selectedRowKeys.map(e => {
       if (e.type === undefined) {
         let type;
+        let name;
         let index = y.findIndex(vl => vl.email === e);
         if (index === -1) {
           type = "a";
-          console.log("true");
+          name= ''
+        //  console.log("true");
         } else {
           type = y[index].type;
-          console.log("false");
+          name = y[index].name
+        //  console.log("false");
         }
         e = {
           Email: e,
-          type_id: type
+          type_id: type,
+          Name: name
         };
       }
       this.state.Email.push(e);
@@ -163,11 +157,6 @@ class ExcelReader extends React.Component {
 
   // function send mail
   onSendMail = () => {
-    //  console.log("item:  ", this.state.fileList);
-    // this.state.fileList.map( vl => {
-    // //  console.log('x: ',x)
-    //   this.state.fileName.push(vl.name);
-    // });
     let customers = this.state.Email;
     let subject = this.state.subject;
     let message = this.state.message;
@@ -177,9 +166,6 @@ class ExcelReader extends React.Component {
     formData.append("text", message);
     formData.append("list_customers", JSON.stringify(customers));
     console.log(this.state.fileName, ": this.state.fileName");
-    // this.state.fileName.forEach((name) => {
-    //   formData.append('file_name', name);
-    // })
     this.state.fileList.forEach(file => {
       formData.append("files", file.originFileObj, file.name);
     });
@@ -217,6 +203,7 @@ class ExcelReader extends React.Component {
                 accept={SheetJSFT}
                 onChange={this.handleChange}
                 style={{width: 300, marginRight: 10}}
+                // onClick={this.handleFile}
               />
             </Col>
             <Col flex='auto'>
