@@ -15,6 +15,7 @@ import FillterMail from "./screen/FillterMail";
 import EmailMonitoring from "./screen/EmailMonitoring";
 import avatar from "./../img/avatar.jpeg";
 import logo from "./../img/logo11.png"
+import Overview from "./screen/Overview";
 
 const { Header, Content, Footer, Sider } = Layout;
 // const SubMenu = Menu.SubMenu;
@@ -53,31 +54,36 @@ class RouterApp extends Component {
                   </h3>
                 </div>
               ) : (
-                <h3>
-                  <Link to="/">
-                    <div>
-                      <img
-                        src={logo}
-                        style={{ width: "100%", height: 60 }}
-                      ></img>
-                    </div>
-                    {/* {siteConfig.siteName} */}
-                  </Link> 
-                </h3>
-              )}
+                  <h3>
+                    <Link to="/">
+                      <div>
+                        <img
+                          src={logo}
+                          style={{ width: "100%", height: 60 }}
+                        ></img>
+                      </div>
+                      {/* {siteConfig.siteName} */}
+                    </Link>
+                  </h3>
+                )}
             </div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <SendOutlined />
+                <span>Overview</span>
+                <Link to="/Overview" />
+              </Menu.Item>
+              <Menu.Item key="2">
+                <SendOutlined />
                 <span>Send Mail</span>
                 <Link to="/ExcelReader" />
               </Menu.Item>
-              <Menu.Item key="2">
+              <Menu.Item key="3">
                 <MailOutlined />
                 <span>Fillter Email</span>
                 <Link to="/FillterEmail" />
               </Menu.Item>
-              <Menu.Item key="3">
+              <Menu.Item key="4">
                 <ToolOutlined />
                 <span>Email Monitoring</span>
                 <Link to="/EmailMonitoring" />
@@ -120,6 +126,8 @@ class RouterApp extends Component {
             >
               <Route exact path="/ExcelReader" component={ExcelReader} />
               <Route exact path="/FillterEmail" component={FillterMail} />
+              <Route exact path="/Overview" component={Overview} />
+              <Route exact path="/" component={Overview} />
               <Route
                 exact
                 path="/EmailMonitoring"
