@@ -13,11 +13,11 @@ class EmailMonitoring extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchText: "",
-      searchColunm: "",
-      datasrc: this.props.monitor.monitorEmail,
-      datasrc1: this.props.monitor.monitorEmail1,
-      datasrc2: this.props.monitor.monitorEmail2
+      dataBounces: [],
+      dataComplaint: [],
+      dataUnsub: [],
+      dataFiter: [],
+      value: ""
     };
   }
   componentDidMount = () => {
@@ -26,48 +26,52 @@ class EmailMonitoring extends Component {
   componentWillReceiveProps(nextprops) {
     if (nextprops.monitor !== this.props.monitor) {
       this.setState({
-        datasrc: nextprops.monitor.monitorEmail,
-        datasrc1: nextprops.monitor.monitorEmail1,
-        datasrc2: nextprops.monitor.monitorEmail2
+        dataBounces: nextprops.monitor.bouncesEmail,
+        dataComplaint: nextprops.monitor.complaintEmail,
+        dataUnsub: nextprops.monitor.unsubEmail
       });
     }
   }
   handleSearch = value => {
-    const colunmkey = this.state.datasrc.filter(vl => {
-      return vl.name.indexOf(value) !== -1;
+    const colunmkey = this.state.dataBounces.filter(vl => {
+      return vl.address.indexOf(value) !== -1;
     });
-    this.setState({ datasrc: colunmkey });
+    this.setState({ dataFiter: colunmkey });
+    console.log(colunmkey, "abc");
+    console.log(this.state.value, "value");
   };
 
   render() {
-    console.log(this.state.datasrc, "bbssbb");
-    console.log(this.state.searchText, "vl");
-
+    console.log(this.state.dataFiter, "dataseach");
+    console.log(this.state.value, "value");
     return (
       <div>
         <Title level={3}>EMAIL MONITORING</Title>
         <Search
           placeholder="Seach for recipient"
-          onSearch={value => {
-            console.log(value, ": value");
-            this.handleSearch(value);
+          onSearch={vl => {
+            this.setState({ value: vl });
+            console.log(vl, ": value");
+            this.handleSearch(vl);
           }}
           // value={this.state.searchText}
           style={{ width: 200 }}
         />
         <Tabs defaultActiveKey="1">
           <TabPane tab="Bounces" key="1">
-            <TableMonitor
-              data={this.state.datasrc}
-              // {...[this.state.datasrc]}
-              type="0"
-            ></TableMonitor>
+            {this.state.value === "" ? (
+            <TableMonitor data={this.state.dataBounces} type="0"></TableMonitor>
+            ) : (
+            <TableMonitor data={this.state.dataFiter} type="0"></TableMonitor>)}
           </TabPane>
           <TabPane tab="Complaints" key="2">
-            <TableMonitor data={this.state.datasrc1} type="1"></TableMonitor>
+            <TableMonitor
+              data={this.state.dataComplaint}
+              type="1"
+            ></TableMonitor>
           </TabPane>
           <TabPane tab="Unsubscribes" key="3">
-            <TableMonitor data={this.state.datasrc2} type="2"></TableMonitor>
+            <TableMonitor data={this.state.dataUnsub} type="2"></TableMonitor>
           </TabPane>
         </Tabs>
       </div>

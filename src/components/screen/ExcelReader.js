@@ -274,7 +274,6 @@ class ExcelReader extends React.Component {
           <TextArea
             aria-label="maximum height"
             placeholder="Tin nhắn"
-            // value={this.state.selectedRowKeys}
             onChange={e => this.setState({ message: e.target.value })}
             allowClear
           />

@@ -1,14 +1,12 @@
 import actions from "./action";
-import { sendMailAPI, getMonitorMailAPI0,getMonitorMailAPI1, getMonitorMailAPI2, deleteMonitorMailAPI } from "../api/sendMailAPI";
+import { sendMailAPI, getBouncesAPI,getComplaintAPI, getUnsubscribesAPI, deleteMonitorMailAPI } from "../api/sendMailAPI";
 import { call, takeEvery, put} from "redux-saga/effects";
 import { notification } from "antd";
 
 export function* saga_send_mail(action) {
   try {
     console.log(action.payload.mail)
-
     console.log(action.payload.mail, ': action.payload.mail');
-
     const res = yield call(sendMailAPI, action.payload.mail);
     //console.log(res)
     if (res.status === 200) {
@@ -36,13 +34,13 @@ export function* saga_send_mail(action) {
 
 export function* saga_get_monitor_mail(action) {
   try {
-    const monitor = yield call (getMonitorMailAPI0);
-    const monitor1 = yield call (getMonitorMailAPI1);
-    const monitor2 = yield call (getMonitorMailAPI2);
+    const monitor = yield call (getBouncesAPI);
+    const monitor1 = yield call (getComplaintAPI);
+    const monitor2 = yield call (getUnsubscribesAPI);
     yield put(actions.action.updateState({
-      monitorEmail : monitor,
-      monitorEmail1 : monitor1,
-      monitorEmail2 : monitor2
+      bouncesEmail : monitor,
+      complaintEmail : monitor1,
+      unsubEmail : monitor2
     }))
   } catch (error) {
     console.log(error);
