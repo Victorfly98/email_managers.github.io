@@ -1,9 +1,10 @@
 import axios from "axios";
+import BASE_API from "./baseAPI";
 
 export const sendMailAPI = async obj => {
   try {
     const res = await axios({
-      url: `http://192.168.100.94:8888/v1/customers/SendMail/`,
+      url: BASE_API + `SendMail/`,
       method: "post",
       data: obj
     });
@@ -16,9 +17,7 @@ export const sendMailAPI = async obj => {
 
 export const getBouncesAPI = async () => {
   try {
-    const res = await axios.get(
-      `http://192.168.100.94:8888/v1/customers/ListBounces`
-    );
+    const res = await axios.get(BASE_API + `ListBounces`);
     // const res = await axios.get(`https://jsonplaceholder.typicode.com/users`)
     return res.data;
   } catch (error) {
@@ -27,9 +26,7 @@ export const getBouncesAPI = async () => {
 };
 export const getComplaintAPI = async () => {
   try {
-    const res = await axios.get(
-      `http://192.168.100.94:8888/v1/mailgunlist/ListComplaints`
-    );
+    const res = await axios.get(BASE_API + `ListComplaints`);
     console.log(res.data, "res");
     return res.data;
   } catch (error) {
@@ -39,9 +36,7 @@ export const getComplaintAPI = async () => {
 
 export const getUnsubscribesAPI = async () => {
   try {
-    const res = await axios.get(
-      `http://192.168.100.94:8888/v1/mailgunlist/ListUnsubscribes`
-    );
+    const res = await axios.get(BASE_API + `ListUnsubscribes`);
     // console.log(res.data, 'res');
     return res.data;
   } catch (error) {
@@ -52,7 +47,7 @@ export const getUnsubscribesAPI = async () => {
 export const deleteMonitorMailAPI = async address => {
   try {
     const res = await axios.delete(
-      `http://192.168.100.94:8888/v1/mailgunlist/DeleteBounce/${address}`
+      BASE_API + `DeleteBounce?address=${address}`
     );
     // const res = await axios({
     //     url: `http://192.168.100.94:8888/v1/mailgunlist/DeleteBounce`,

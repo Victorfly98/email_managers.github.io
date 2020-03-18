@@ -28,7 +28,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({ address: record.key })}
+                onConfirm={() => this.handleDelete(record.key)}
               >
                 <Button
                   style={{
@@ -60,7 +60,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({ address: record.key })}
+                onConfirm={() => this.handleDelete(record.key)}
               >
                 <Button
                   style={{
@@ -95,7 +95,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({ address: record.key })}
+                onConfirm={() => this.handleDelete(record.key)}
               >
                 <Button
                   style={{

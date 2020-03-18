@@ -6,15 +6,16 @@ import {
   MenuFoldOutlined,
   SendOutlined,
   MailOutlined,
-  ToolOutlined,
-  HomeOutlined
+  CloseSquareOutlined,
+  HomeOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
 import "../css/Menu.css";
 import ExcelReader from "./screen/ExcelReader";
 import FillterMail from "./screen/FillterMail";
 import EmailMonitoring from "./screen/EmailMonitoring";
 import avatar from "./../img/avatar.jpeg";
-import logo from "./../img/logo11.png"
+import logo from "./../img/logo11.png";
 import Overview from "./screen/Overview";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -54,22 +55,22 @@ class RouterApp extends Component {
                   </h3>
                 </div>
               ) : (
-                  <h3>
-                    <Link to="/">
-                      <div>
-                        <img
-                          src={logo}
-                          style={{ width: "100%", height: 60 }}
-                        ></img>
-                      </div>
-                      {/* {siteConfig.siteName} */}
-                    </Link>
-                  </h3>
-                )}
+                <h3>
+                  <Link to="/">
+                    <div>
+                      <img
+                        src={logo}
+                        style={{ width: "100%", height: 60 }}
+                      ></img>
+                    </div>
+                    {/* {siteConfig.siteName} */}
+                  </Link>
+                </h3>
+              )}
             </div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
-                <SendOutlined />
+                <EyeOutlined />
                 <span>Overview</span>
                 <Link to="/Overview" />
               </Menu.Item>
@@ -84,7 +85,7 @@ class RouterApp extends Component {
                 <Link to="/FillterEmail" />
               </Menu.Item>
               <Menu.Item key="4">
-                <ToolOutlined />
+                <CloseSquareOutlined />
                 <span>Email Monitoring</span>
                 <Link to="/EmailMonitoring" />
               </Menu.Item>
