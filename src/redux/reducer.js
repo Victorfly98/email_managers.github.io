@@ -1,7 +1,9 @@
 import actions from './action'
 
 const initialState = {
-    monitorEmail: []
+    bouncesEmail: [],
+    complaintEmail: [],
+    unsubEmail: []
 }
 
 const reducer = (state = initialState, action) => {

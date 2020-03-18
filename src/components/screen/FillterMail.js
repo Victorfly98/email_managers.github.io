@@ -1,35 +1,21 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
 class FillterEmail extends Component {
-    
-    componentDidMount = () => {
-        
-    }
+  componentDidMount = () => {};
 
-    render() {
-        return (
-            <div>
-                FillterEmail
-            </div>
-        )
-    }
+  render() {
+    return <div>FillterEmail</div>;
+  }
 }
 
 const mapStateToProps = state => {
-    return {
-        
-    }
-}
+  return {};
+};
 
 const mapDispatchToProps = dispatch => {
-    return {
-       
-    }
-}
+  return {};
+};
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(FillterEmail)
+export default connect(mapStateToProps, mapDispatchToProps)(FillterEmail);

@@ -2,7 +2,17 @@ import React from "react";
 import _ from "lodash";
 import { SheetJSFT } from "../readExcelFile/types.js";
 import XLSX from "xlsx";
-import { Input, Table, Button, Select, Upload, Form, Typography, Row, Col } from "antd";
+import {
+  Input,
+  Table,
+  Button,
+  Select,
+  Upload,
+  Form,
+  Typography,
+  Row,
+  Col
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import getAction from "../../redux/action";
@@ -97,7 +107,7 @@ class ExcelReader extends React.Component {
       }
       return file;
     });
-    
+
     this.setState({ fileList });
   };
 
@@ -135,12 +145,12 @@ class ExcelReader extends React.Component {
         let index = y.findIndex(vl => vl.email === e);
         if (index === -1) {
           type = "a";
-          name= ''
-        //  console.log("true");
+          name = "";
+          //  console.log("true");
         } else {
           type = y[index].type;
-          name = y[index].name
-        //  console.log("false");
+          name = y[index].name;
+          //  console.log("false");
         }
         e = {
           Email: e,
@@ -189,24 +199,24 @@ class ExcelReader extends React.Component {
 
     return (
       <Form>
-        <Title level = {3}>SEND MAIL</Title>
+        <Title level={3}>SEND MAIL</Title>
         <Form.Item
           label="Chọn file chứa thông tin khách hàng:"
           name="chose_file"
         >
           <Row>
-            <Col flex='300px'>
+            <Col flex="300px">
               <Input
                 type="file"
                 className="form-control"
                 id="file"
                 accept={SheetJSFT}
                 onChange={this.handleChange}
-                style={{width: 300, marginRight: 10}}
+                style={{ width: 300, marginRight: 10 }}
                 // onClick={this.handleFile}
               />
             </Col>
-            <Col flex='auto'>
+            <Col flex="auto">
               <Button
                 disabled={!this.state.file}
                 type="submit"
@@ -233,7 +243,7 @@ class ExcelReader extends React.Component {
               );
             })}
           </Select>
-        </Form.Item>  
+        </Form.Item>
         <Form.Item name="table_customer">
           {this.state.selected === "all" ? (
             <Table

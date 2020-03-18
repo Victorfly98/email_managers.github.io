@@ -28,7 +28,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address:record.key})}
+                onConfirm={() => this.handleDelete({ address: record.key })}
               >
                 <Button
                   style={{
@@ -60,7 +60,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address:record.key})}
+                onConfirm={() => this.handleDelete({ address: record.key })}
               >
                 <Button
                   style={{
@@ -95,7 +95,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address:record.key})}
+                onConfirm={() => this.handleDelete({ address: record.key })}
               >
                 <Button
                   style={{
@@ -118,24 +118,28 @@ export class TableMonitor extends React.Component {
     };
   }
   componentDidMount() {
-    let datasrc = this.props.data.map(e => {
-      let timestamp = Date.parse(e.created_at);
-      let time = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      }).format(timestamp);
-      return {
-        key: e["address"],
-        time: time,
-        ...e
-      };
-    });
+    if (this.props.data !== null) {
+      let datasrc = this.props.data.map(e => {
+        let timestamp = Date.parse(e.created_at);
+        let time = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        }).format(timestamp);
+        return {
+          key: e["address"],
+          time: time,
+          ...e
+        };
+      });
+      this.setState({
+        dataSource: datasrc
+      });
+    }
     this.setState({
-      dataSource: datasrc,
       columns: this.columns[this.props.type]
     });
   }
