@@ -28,7 +28,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete(record.key)}
+                onConfirm={() => this.handleDelete({address: record.key, deleled: 'DeleteBounce'})}
               >
                 <Button
                   style={{
@@ -60,7 +60,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete(record.key)}
+                onConfirm={() => this.handleDelete({address: record.key, deleled: ''})}
               >
                 <Button
                   style={{
@@ -95,7 +95,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete(record.key)}
+                onConfirm={() => this.handleDelete({address: record.key, deleled: 'DeleteUnsubcribe'})}
               >
                 <Button
                   style={{
@@ -170,11 +170,11 @@ export class TableMonitor extends React.Component {
     }
   }
 
-  handleDelete = key => {
+  handleDelete = (monitor) => {
     const dataSource = [...this.state.dataSource];
-    this.props.deleteMail(key);
+    this.props.deleteMail(monitor);
     this.setState({
-      dataSource: dataSource.filter(item => item.key !== key)
+      dataSource: dataSource.filter(item => item.key !== monitor.address)
     });
   };
   onSelectChange = selectedRowKeys => {
@@ -233,8 +233,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteMail: id => {
-      dispatch(getAction.action.deleteMonitorEmail(id));
+    deleteMail: monitor => {
+      dispatch(getAction.action.deleteMonitorEmail(monitor));
     }
   };
 };

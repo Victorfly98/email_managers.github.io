@@ -37,7 +37,6 @@ class EmailMonitoring extends Component {
       return vl.address.indexOf(value) !== -1;
     });
     this.setState({ dataFiter: colunmkey });
-    console.log(colunmkey, "abc");
     console.log(this.state.value, "value");
   };
 

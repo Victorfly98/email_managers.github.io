@@ -60,7 +60,12 @@ export function* saga_get_monitor_mail(action) {
 
 export function* saga_delete_monitor_mail(action) {
   try {
-    const monitor = yield call(deleteMonitorMailAPI, action.payload.id);
+    console.log(action.payload,'aasdasdasd');
+    const address = action.payload.monitor.address;
+    const deleteUrl = action.payload.monitor.deleled;
+    
+    
+    const monitor = yield call(deleteMonitorMailAPI,address, deleteUrl );
     console.log(monitor);
   } catch (error) {
     console.log(error);

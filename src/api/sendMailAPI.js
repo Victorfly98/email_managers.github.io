@@ -54,10 +54,10 @@ export const getUnsubscribesAPI = async () => {
   }
 };
 
-export const deleteMonitorMailAPI = async address => {
+export const deleteMonitorMailAPI = async (address, deleteUrl) => {
   try {
     const res = await axios.delete(
-      BASE_API + `DeleteBounce?address=${address}`
+      BASE_API+deleteUrl+`?address=${address}`
     );
     // const res = await axios({
     //     url: `http://192.168.100.94:8888/v1/mailgunlist/DeleteBounce`,
@@ -69,3 +69,4 @@ export const deleteMonitorMailAPI = async address => {
     return console.log("error: ", error);
   }
 };
+

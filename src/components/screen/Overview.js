@@ -43,7 +43,6 @@ class Overview extends Component {
         let time = Date.parse(vl.created_at);
         let date = this.formatDate(vl.created_at);
         return {
-          key: vl["address"],
           date: date,
           time: time,
           ...vl
@@ -75,6 +74,9 @@ class Overview extends Component {
     const optionsData = {
       chart: {
         type: "spline"
+      },
+      credits: {
+        enabled: false
       },
       title:{
         text: 'MAIL STATISTICS'

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Typography } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -19,6 +19,7 @@ import logo from "./../img/logo11.png";
 import Overview from "./screen/Overview";
 
 const { Header, Content, Footer, Sider } = Layout;
+const { Title } = Typography;
 // const SubMenu = Menu.SubMenu;
 
 class RouterApp extends Component {
@@ -110,7 +111,7 @@ class RouterApp extends Component {
                     onClick: this.toggle
                   }
                 )}
-
+                <Title level={2}>MAIL MANAGER</Title>
                 <img
                   src={avatar}
                   style={{ width: 50, height: 50, borderRadius: 25 }}

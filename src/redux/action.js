@@ -21,11 +21,11 @@ const action = {
             payload: {}
         }
     },
-    deleteMonitorEmail: (id) => {
+    deleteMonitorEmail: (monitor) => {
         return {
             type: type.DELETE_MONITOR_EMAIL,
             payload: {
-                id
+                monitor
             }
         }
     },
