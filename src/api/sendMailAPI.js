@@ -34,6 +34,16 @@ export const getComplaintAPI = async () => {
   }
 };
 
+export const getDeliveredAPI = async () => {
+  try {
+    const res = await axios.get(BASE_API + `PrintEventLog?param=delivered`);
+    console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
+
 export const getUnsubscribesAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `ListUnsubscribes`);
@@ -54,7 +64,6 @@ export const deleteMonitorMailAPI = async address => {
     //     method: 'delete',
     //     data: address
     // })
-    //console.log(res.data)
     return res;
   } catch (error) {
     return console.log("error: ", error);

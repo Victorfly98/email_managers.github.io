@@ -1,12 +1,19 @@
 import actions from "./action";
-import { sendMailAPI, getBouncesAPI,getComplaintAPI, getUnsubscribesAPI, deleteMonitorMailAPI } from "../api/sendMailAPI";
-import { call, takeEvery, put} from "redux-saga/effects";
+import {
+  sendMailAPI,
+  getBouncesAPI,
+  getComplaintAPI,
+  getUnsubscribesAPI,
+  deleteMonitorMailAPI,
+  getDeliveredAPI
+} from "../api/sendMailAPI";
+import { call, takeEvery, put } from "redux-saga/effects";
 import { notification } from "antd";
 
 export function* saga_send_mail(action) {
   try {
-    console.log(action.payload.mail)
-    console.log(action.payload.mail, ': action.payload.mail');
+    console.log(action.payload.mail);
+    console.log(action.payload.mail, ": action.payload.mail");
     const res = yield call(sendMailAPI, action.payload.mail);
     //console.log(res)
     if (res.status === 200) {
@@ -31,17 +38,21 @@ export function* saga_send_mail(action) {
   }
 }
 
-
 export function* saga_get_monitor_mail(action) {
   try {
-    const monitor = yield call (getBouncesAPI);
-    const monitor1 = yield call (getComplaintAPI);
-    const monitor2 = yield call (getUnsubscribesAPI);
-    yield put(actions.action.updateState({
-      bouncesEmail : monitor,
-      complaintEmail : monitor1,
-      unsubEmail : monitor2
-    }))
+    const monitor = yield call(getBouncesAPI);
+   const monitor1 = yield call(getComplaintAPI);
+   const monitor2 = yield call(getUnsubscribesAPI);
+   const delivered = yield call(getDeliveredAPI);
+
+    yield put(
+      actions.action.updateState({
+        bouncesEmail: monitor,
+       complaintEmail: monitor1,
+       unsubEmail: monitor2,
+       deliver: delivered
+      })
+    );
   } catch (error) {
     console.log(error);
   }
@@ -49,8 +60,8 @@ export function* saga_get_monitor_mail(action) {
 
 export function* saga_delete_monitor_mail(action) {
   try {
-    const monitor = yield call (deleteMonitorMailAPI, action.payload.id)
-    console.log(monitor)
+    const monitor = yield call(deleteMonitorMailAPI, action.payload.id);
+    console.log(monitor);
   } catch (error) {
     console.log(error);
   }
