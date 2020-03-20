@@ -16,8 +16,11 @@ class Overview extends Component {
     super(props);
     this.state = {
       datasrc: [],
-      data: [],
-      label: []
+      dataBonces: [],
+      dataDelivered: [],
+      label: [],
+      labelDelivered: [],
+      labelBonces: []
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
   }
@@ -36,10 +39,34 @@ class Overview extends Component {
   componentDidMount = () => {
     this.props.getMonitorEmail();
   };
+  // test server
+  convertData(dataConvert){
+    dataConvert.sort(function(a, b) {
+      return a.time - b.time;
+    });
+    let groups = _.groupBy(dataConvert, "date");
+    var result = Object.keys(groups).map(function(key) {
+      return [String(key), groups[key]];
+    });
+    let data = [];
+    result.map(vl => {
+      data.push({
+        label: vl[0],
+        y: vl[1].length
+      });
+    });
+    var label = data.map(e => {
+      return e.label;
+    });
+    return {
+      data: data,
+      label: label
+    }
+  }
 
   componentWillReceiveProps(nextprops) {
     if (nextprops !== this.props) {
-      let datamonitorEmail = nextprops.monitor.bouncesEmail.map(vl => {
+      let dataBoncesEmail = nextprops.monitor.bouncesEmail.map(vl => {
         let time = Date.parse(vl.created_at);
         let date = this.formatDate(vl.created_at);
         return {
@@ -48,29 +75,36 @@ class Overview extends Component {
           ...vl
         };
       });
-      datamonitorEmail.sort(function(a, b) {
-        return a.time - b.time;
+      let dataDeliveredEmail = nextprops.monitor.deliver.map(vl => {
+        let timestamptodate = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        }).format(vl.timestamp*1000);
+        console.log(timestamptodate,'time')
+        let date = this.formatDate(timestamptodate);
+        return {
+          date: date,
+          time: vl.timestamp,
+          ...vl
+        };
       });
-      let groups = _.groupBy(datamonitorEmail, "date");
-      var result = Object.keys(groups).map(function(key) {
-        return [String(key), groups[key]];
-      });
-      let data = [];
-      result.map(vl => {
-        data.push({
-          label: vl[0],
-          y: vl[1].length
-        });
-      });
-      var label = data.map(e => {
-        return e.label;
-      });
-      this.setState({ data: data, label: label });
+      // set state data bonces
+      const dataBonces = this.convertData(dataBoncesEmail).data
+      const labelBonces = this.convertData(dataBoncesEmail).label
+      // set state data delivered
+      const dataDelivered = this.convertData(dataDeliveredEmail).data
+      const labelDelivered = this.convertData(dataDeliveredEmail).label
+
+      this.setState({dataBonces: dataBonces, dataDelivered: dataDelivered, label: labelBonces.concat(labelDelivered) });
     }
   }
   render() {
-    const { data, label } = this.state;
-    console.log(label, "label");
+    const { dataBonces, dataDelivered, label } = this.state;
+  //  console.log(label, "label");
     const optionsData = {
       chart: {
         type: "spline"
@@ -81,6 +115,7 @@ class Overview extends Component {
       title:{
         text: 'MAIL STATISTICS'
       },
+      // ??? gop mang
       xAxis: {
         categories: label
       },
@@ -89,10 +124,14 @@ class Overview extends Component {
           text: 'Number of email'
         }
       },
+      // set 2 data 
       series: [
         {
           name: "Bounces",
-          data: data
+          data: dataBonces
+        },{
+          name: "Delivered",
+          data: dataDelivered
         }
       ]
     };

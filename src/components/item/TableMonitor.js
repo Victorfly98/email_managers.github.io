@@ -117,27 +117,33 @@ export class TableMonitor extends React.Component {
       selectedRowKeys: []
     };
   }
+
+  loadDataFromProps(props){
+    let datasrc = props.data.map(e => {
+      let timestamp = Date.parse(e.created_at);
+      let time = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(timestamp);
+      return {
+        key: e["address"],
+        time: time,
+        ...e
+      };
+    });
+    this.setState({
+      dataSource: datasrc
+    });
+  }
+
+
   componentDidMount() {
     if (this.props.data !== null) {
-      let datasrc = this.props.data.map(e => {
-        let timestamp = Date.parse(e.created_at);
-        let time = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        }).format(timestamp);
-        return {
-          key: e["address"],
-          time: time,
-          ...e
-        };
-      });
-      this.setState({
-        dataSource: datasrc
-      });
+      this.loadDataFromProps(this.props)
     }
     this.setState({
       columns: this.columns[this.props.type]
@@ -147,26 +153,8 @@ export class TableMonitor extends React.Component {
     console.log("nextprops", nextprops);
     console.log("type: ", this.props.type);
     if (nextprops !== this.props) {
-      let datasrc = nextprops.data.map(e => {
-        let timestamp = Date.parse(e.created_at);
-        let time = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        }).format(timestamp);
-        return {
-          key: e["address"],
-          time: time,
-          ...e
-        };
-      });
-      this.setState({
-        dataSource: datasrc,
-        columns: this.columns[nextprops.type]
-      });
+      this.loadDataFromProps(nextprops)
+      this.setState({columns: this.columns[nextprops.type]})
     }
   }
 
@@ -181,7 +169,9 @@ export class TableMonitor extends React.Component {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
-  start = () => {
+  
+  //xét type của tab
+  handleDeleteSelectMail = () => {
     let { selectedRowKeys } = this.state;
     let { dataSource } = this.state;
     selectedRowKeys.map(id => {
@@ -206,7 +196,7 @@ export class TableMonitor extends React.Component {
     return (
       <div>
         <Button
-          onClick={this.start}
+          onClick={this.handleDeleteSelectMail}
           disabled={!hasSelected}
           style={{
             borderRadius: 16,
