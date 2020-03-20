@@ -11,12 +11,16 @@ import {
   Form,
   Typography,
   Row,
-  Col
+  Col,
+  Modal,
+  Alert
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import getAction from "../../redux/action";
 import { connect } from "react-redux";
+
+const { confirm } = Modal;
 const { Option } = Select;
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -53,6 +57,8 @@ class ExcelReader extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleFile = this.handleFile.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.onSendMail = this.onSendMail.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   //click select file
@@ -137,30 +143,38 @@ class ExcelReader extends React.Component {
   }
   onSelectChange = selectedRowKeys => {
     const y = this.state.data;
-    this.state.Email = [];
+    var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    this.setState({ Email: [] });
     selectedRowKeys.map(e => {
-      if (e.type === undefined) {
-        let type;
-        let name;
-        let index = y.findIndex(vl => vl.email === e);
-        if (index === -1) {
-          type = "a";
-          name = "";
-          //  console.log("true");
-        } else {
-          type = y[index].type;
-          name = y[index].name;
-          //  console.log("false");
+      if(filter.test(e) === true){
+        if (e.type === undefined) {
+          let type;
+          let name;
+          let index = y.findIndex(vl => vl.email === e);
+          if (index === -1) {
+            type = "a";
+            name = "";
+            //  console.log("true");
+          } else {
+            type = y[index].type;
+            name = y[index].name;
+            //  console.log("false");
+          }
+          e = {
+            Email: e,
+            type_id: type,
+            Name: name
+          };
+          this.state.Email.push(e);
+          this.setState({ selectedRowKeys });
         }
-        e = {
-          Email: e,
-          type_id: type,
-          Name: name
-        };
       }
-      this.state.Email.push(e);
+       else {
+        <Alert/>
+        this.setState({ selectedRowKeys: [] });
+      }
     });
-    this.setState({ selectedRowKeys });
+
     // this.setState({showEmail: selectedRowKeys})
     console.log("showEmail: ", this.state.Email);
   };
@@ -181,7 +195,34 @@ class ExcelReader extends React.Component {
     });
     console.log(formData, ": formdata");
     this.props.sendMail(formData);
+    this.setState({
+      Email: [],
+      subject: "",
+      message: "",
+      fileList: [],
+      selectedRowKeys: []
+    });
   };
+  onClick() {
+    const ref = this;
+    if (this.state.subject === "" && this.state.message === "") {
+      confirm({
+        title: "Do you want to send mail?",
+        icon: <ExclamationCircleOutlined />,
+        content: "Subject or Message is null.",
+        onOk() {
+          ref.onSendMail();
+          return new Promise((resolve, reject) => {
+            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          }).catch(() => console.log("Send errors!"));
+        },
+        onCancel() {}
+      });
+    } else {
+      ref.onSendMail();
+    }
+  }
+
   render() {
     const groups = Object.keys(_.groupBy(this.state.data, "type"));
     const { selectedRowKeys } = this.state;
@@ -282,6 +323,7 @@ class ExcelReader extends React.Component {
             allowClear
           ></Input>
           <TextArea
+            rows={6}
             aria-label="maximum height"
             placeholder="Tin nhắn"
             onChange={e => this.setState({ message: e.target.value })}
@@ -297,7 +339,16 @@ class ExcelReader extends React.Component {
             </Upload>
           </div>
           <div style={{ textAlign: "right" }}>
-            <Button type="primary" onClick={this.onSendMail}>
+            <Button
+              type="primary"
+              onClick={this.onClick}
+              disabled={
+                !this.state.Email[0] ||
+                (this.state.subject === "" &&
+                  this.state.message === "" &&
+                  !this.state.fileList[0])
+              }
+            >
               Send
             </Button>
           </div>
