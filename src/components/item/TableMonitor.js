@@ -28,7 +28,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleled: 'DeleteBounce'})}
+                onConfirm={() => this.handleDelete({address: record.key, deleteURL: 'DeleteBounce'})}
               >
                 <Button
                   style={{
@@ -60,7 +60,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleled: ''})}
+                onConfirm={() => this.handleDelete({address: record.key, deleteURL: ''})}
               >
                 <Button
                   style={{
@@ -95,7 +95,7 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleled: 'DeleteUnsubcribe'})}
+                onConfirm={() => this.handleDelete({address: record.key, deleteURL: 'DeleteUnsubcribe'})}
               >
                 <Button
                   style={{
@@ -172,11 +172,15 @@ export class TableMonitor extends React.Component {
   
   //xét type của tab
   handleDeleteSelectMail = () => {
+    let deleteURL ;
+    if (this.props.type === '0') deleteURL = 'DeleteBounce'
+    if (this.props.type === '1') deleteURL = ''
+    if (this.props.type === '2') deleteURL = 'DeleteUnsubcribe'
     let { selectedRowKeys } = this.state;
     let { dataSource } = this.state;
-    selectedRowKeys.map(id => {
-      this.props.deleteMail(id);
-      dataSource = dataSource.filter(item => item.id !== id);
+    selectedRowKeys.map(address => {
+      this.props.deleteMail({address: address, deleteURL: deleteURL});
+      dataSource = dataSource.filter(item => item.address !== address);
     });
     this.setState({ dataSource });
     console.log(dataSource);

@@ -3,7 +3,11 @@ import actions from './action'
 const initialState = {
     bouncesEmail: [],
     complaintEmail: [],
-    unsubEmail: []
+    unsubEmail: [],
+    deliver: [],
+    failed: [],
+    opened: [],
+    clicked: []
 }
 
 const reducer = (state = initialState, action) => {

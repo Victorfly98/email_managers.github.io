@@ -2,7 +2,8 @@ const type = {
     SEND_MAIL: 'SEND_MAIL',
     GET_MONITOR_EMAIL: 'GET_MONITOR_EMAIL',
     UPDATE_STATE: 'UPDATE_STATE',
-    DELETE_MONITOR_EMAIL: 'DELETE_MONITOR_EMAIL'
+    DELETE_MONITOR_EMAIL: 'DELETE_MONITOR_EMAIL',
+    GET_EVENT: 'GET_EVENT'
 }
 
 const action = {
@@ -27,6 +28,12 @@ const action = {
             payload: {
                 monitor
             }
+        }
+    },
+    getEvent: () => {
+        return {
+            type: type.GET_EVENT,
+            payload: {}
         }
     },
     updateState: (state) => {

@@ -14,6 +14,7 @@ import "../css/Menu.css";
 import ExcelReader from "./screen/ExcelReader";
 import FillterMail from "./screen/FillterMail";
 import EmailMonitoring from "./screen/EmailMonitoring";
+import Event from "./screen/Event";
 import avatar from "./../img/avatar.jpeg";
 import logo from "./../img/logo11.png";
 import Overview from "./screen/Overview";
@@ -90,6 +91,11 @@ class RouterApp extends Component {
                 <span>Email Monitoring</span>
                 <Link to="/EmailMonitoring" />
               </Menu.Item>
+              <Menu.Item key="5">
+                <CloseSquareOutlined />
+                <span>Event</span>
+                <Link to="/Event" />
+              </Menu.Item>
             </Menu>
           </Sider>
           <Layout>
@@ -130,6 +136,7 @@ class RouterApp extends Component {
               <Route exact path="/FillterEmail" component={FillterMail} />
               <Route exact path="/Overview" component={Overview} />
               <Route exact path="/" component={Overview} />
+              <Route exact path="/Event" component={Event} />
               <Route
                 exact
                 path="/EmailMonitoring"

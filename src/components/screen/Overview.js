@@ -38,30 +38,26 @@ class Overview extends Component {
   }
   componentDidMount = () => {
     this.props.getMonitorEmail();
+    this.props.getEvent();
   };
   // test server
-  convertData(dataConvert){
-    dataConvert.sort(function(a, b) {
+  convertData(dataConvert) {
+    dataConvert.sort(function (a, b) {
       return a.time - b.time;
     });
     let groups = _.groupBy(dataConvert, "date");
-    var result = Object.keys(groups).map(function(key) {
-      return [String(key), groups[key]];
+    var result = Object.keys(groups).map(function (key) {
+      return [new Date(key), groups[key]];
     });
     let data = [];
     result.map(vl => {
       data.push({
-        label: vl[0],
+        x: vl[0],
         y: vl[1].length
       });
     });
-    var label = data.map(e => {
-      return e.label;
-    });
-    return {
-      data: data,
-      label: label
-    }
+    console.log(data, 'data')
+    return data
   }
 
   componentWillReceiveProps(nextprops) {
@@ -69,6 +65,7 @@ class Overview extends Component {
       let dataBoncesEmail = nextprops.monitor.bouncesEmail.map(vl => {
         let time = Date.parse(vl.created_at);
         let date = this.formatDate(vl.created_at);
+      //  console.log("date", date);
         return {
           date: date,
           time: time,
@@ -83,8 +80,8 @@ class Overview extends Component {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit"
-        }).format(vl.timestamp*1000);
-        console.log(timestamptodate,'time')
+        }).format(vl.timestamp * 1000);
+
         let date = this.formatDate(timestamptodate);
         return {
           date: date,
@@ -93,18 +90,15 @@ class Overview extends Component {
         };
       });
       // set state data bonces
-      const dataBonces = this.convertData(dataBoncesEmail).data
-      const labelBonces = this.convertData(dataBoncesEmail).label
+      const dataBonces = this.convertData(dataBoncesEmail)
       // set state data delivered
-      const dataDelivered = this.convertData(dataDeliveredEmail).data
-      const labelDelivered = this.convertData(dataDeliveredEmail).label
+      const dataDelivered = this.convertData(dataDeliveredEmail)
 
-      this.setState({dataBonces: dataBonces, dataDelivered: dataDelivered, label: labelBonces.concat(labelDelivered) });
+      this.setState({ dataBonces: dataBonces, dataDelivered: dataDelivered });
     }
   }
   render() {
-    const { dataBonces, dataDelivered, label } = this.state;
-  //  console.log(label, "label");
+    const { dataBonces, dataDelivered } = this.state;
     const optionsData = {
       chart: {
         type: "spline"
@@ -112,31 +106,35 @@ class Overview extends Component {
       credits: {
         enabled: false
       },
-      title:{
+      title: {
         text: 'MAIL STATISTICS'
       },
-      // ??? gop mang
+
       xAxis: {
-        categories: label
+        type: 'datetime',
+        labels: {
+          format: '{value:%b %e \%Y}',
+          rotation: -45,
+          align: 'right'
+        }
       },
       yAxis: {
         title: {
           text: 'Number of email'
         }
       },
-      // set 2 data 
       series: [
         {
           name: "Bounces",
-          data: dataBonces
-        },{
+          data: dataBonces,
+        }, {
           name: "Delivered",
           data: dataDelivered
-        }
+        },
       ]
     };
     return (
-      <div style={{width: 1000}}>
+      <div style={{ width: 1000 }}>
         <Title level={3}>OVERVIEW</Title>
         <HighchartsReact
           highcharts={Highcharts}
@@ -157,6 +155,9 @@ const mapDispatchToProps = dispatch => {
   return {
     getMonitorEmail: () => {
       dispatch(getAction.action.getMonitorEmail());
+    },
+    getEvent: () => {
+      dispatch(getAction.action.getEvent());
     }
   };
 };

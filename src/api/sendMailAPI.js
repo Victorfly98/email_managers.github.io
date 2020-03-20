@@ -34,6 +34,16 @@ export const getComplaintAPI = async () => {
   }
 };
 
+export const getUnsubscribesAPI = async () => {
+  try {
+    const res = await axios.get(BASE_API + `ListUnsubscribes`);
+    // console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
+
 export const getDeliveredAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `PrintEventLog?param=delivered`);
@@ -44,10 +54,30 @@ export const getDeliveredAPI = async () => {
   }
 };
 
-export const getUnsubscribesAPI = async () => {
+export const getFailedAPI = async () => {
   try {
-    const res = await axios.get(BASE_API + `ListUnsubscribes`);
-    // console.log(res.data, 'res');
+    const res = await axios.get(BASE_API + `PrintEventLog?param=failed`);
+    console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
+
+export const getOpenedAPI = async () => {
+  try {
+    const res = await axios.get(BASE_API + `PrintEventLog?param=opened`);
+    console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
+
+export const getClickedAPI = async () => {
+  try {
+    const res = await axios.get(BASE_API + `PrintEventLog?param=clicked`);
+    console.log(res.data, 'res');
     return res.data;
   } catch (error) {
     return console.log("error: ", error);
