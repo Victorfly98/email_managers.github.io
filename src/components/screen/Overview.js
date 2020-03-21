@@ -6,6 +6,7 @@ import { Typography } from "antd";
 //import HighchartsReact
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
+import moment from 'moment';
 // import HC_more from "highcharts/highcharts-more"; //module
 // HC_more(Highcharts); //init module
 
@@ -20,7 +21,8 @@ class Overview extends Component {
       dataDelivered: [],
       label: [],
       labelDelivered: [],
-      labelBonces: []
+      labelBonces: [],
+      categories: [],
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
   }
@@ -46,15 +48,18 @@ class Overview extends Component {
       return a.time - b.time;
     });
     let groups = _.groupBy(dataConvert, "date");
+    this.setState({ categories: Object.keys(groups) })
+    console.log(groups,'groups')
     var result = Object.keys(groups).map(function (key) {
-      return [new Date(key), groups[key]];
+      return [key, groups[key]];
     });
+    console.log(result,'result')
     let data = [];
     result.map(vl => {
-      data.push({
-        x: vl[0],
-        y: vl[1].length
-      });
+      data.push([
+        new Date(vl[0]).valueOf() + 60 * moment().utcOffset() * 1000,
+        vl[1].length
+      ]);
     });
     console.log(data, 'data')
     return data
@@ -63,26 +68,17 @@ class Overview extends Component {
   componentWillReceiveProps(nextprops) {
     if (nextprops !== this.props) {
       let dataBoncesEmail = nextprops.monitor.bouncesEmail.map(vl => {
-        let time = Date.parse(vl.created_at);
+        let time = moment.utc(vl.created_at);
         let date = this.formatDate(vl.created_at);
-      //  console.log("date", date);
+        //  console.log("date", date);
         return {
-          date: date,
-          time: time,
+          date,
+          time,
           ...vl
         };
       });
       let dataDeliveredEmail = nextprops.monitor.deliver.map(vl => {
-        let timestamptodate = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        }).format(vl.timestamp * 1000);
-
-        let date = this.formatDate(timestamptodate);
+        let date = this.formatDate(vl.timestamp * 1000);
         return {
           date: date,
           time: vl.timestamp,
@@ -99,6 +95,11 @@ class Overview extends Component {
   }
   render() {
     const { dataBonces, dataDelivered } = this.state;
+    console.log(dataDelivered, 'dataDelivered');
+    console.log(dataBonces, 'dataBonces');
+    console.log(this.state.categories, 'this.state.categories');
+    
+
     const optionsData = {
       chart: {
         type: "spline"
@@ -109,6 +110,7 @@ class Overview extends Component {
       title: {
         text: 'MAIL STATISTICS'
       },
+      
 
       xAxis: {
         type: 'datetime',
@@ -126,9 +128,11 @@ class Overview extends Component {
       series: [
         {
           name: "Bounces",
+          type: 'spline',
           data: dataBonces,
         }, {
           name: "Delivered",
+          type: 'spline',
           data: dataDelivered
         },
       ]

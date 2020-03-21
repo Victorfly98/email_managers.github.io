@@ -170,7 +170,6 @@ class ExcelReader extends React.Component {
         }
       }
        else {
-        <Alert/>
         this.setState({ selectedRowKeys: [] });
       }
     });
