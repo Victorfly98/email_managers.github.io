@@ -20,6 +20,11 @@ export function* saga_send_mail(action) {
     const res = yield call(sendMailAPI, action.payload.mail);
     //console.log(res)
     if (res.status === 200) {
+      yield put(
+        actions.action.updateState({
+          isSended: true
+        })
+      );
       console.log("gửi thành công");
       notification.success({
         message: "Gửi email thành công"
@@ -31,12 +36,11 @@ export function* saga_send_mail(action) {
         description: "Có lỗi trong quá trình gửi email"
       });
     }
-    console.log(res);
   } catch (error) {
     console.log(error);
     notification.error({
       message: "Gửi email thất bại",
-      description: "Có lỗi trong quá trình gửi email"
+      description: "Có lỗi trong quá trình gửi email vui lòng kiểm tra lại đường truyền"
     });
   }
 }

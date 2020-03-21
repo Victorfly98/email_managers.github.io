@@ -13,12 +13,14 @@ import {
   Row,
   Col,
   Modal,
-  Alert
+  Alert,
+  DatePicker,
 } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import getAction from "../../redux/action";
 import { connect } from "react-redux";
+import moment from "moment";
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -52,7 +54,10 @@ class ExcelReader extends React.Component {
       message: "",
       Email: [],
       fileList: [],
-      fileName: []
+      fileName: [],
+      selectedRowKeysReply: [],
+      TimeSend: Date.now(),
+      isSending: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleFile = this.handleFile.bind(this);
@@ -142,51 +147,77 @@ class ExcelReader extends React.Component {
     });
   }
   onSelectChange = selectedRowKeys => {
-    const y = this.state.data;
+    const dataRoot = this.state.data;
     var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    this.setState({ Email: [] });
-    selectedRowKeys.map(e => {
-      if(filter.test(e) === true){
-        if (e.type === undefined) {
-          let type;
-          let name;
-          let index = y.findIndex(vl => vl.email === e);
-          if (index === -1) {
-            type = "a";
-            name = "";
-            //  console.log("true");
-          } else {
-            type = y[index].type;
-            name = y[index].name;
-            //  console.log("false");
-          }
-          e = {
-            Email: e,
-            type_id: type,
-            Name: name
-          };
-          this.state.Email.push(e);
-          this.setState({ selectedRowKeys });
+    this.state.Email = []
+    const checkMail = []
+    selectedRowKeys.map(vl => {
+      if (filter.test(vl) === true) checkMail.push(vl)
+    })
+    checkMail.map(e => {
+      if (e.type === undefined) {
+        let type;
+        let name;
+        let index = dataRoot.findIndex(vl => vl.email === e);
+        if (index === -1) {
+          type = "a";
+          name = "";
+          //  console.log("true");
+        } else {
+          type = dataRoot[index].type;
+          name = dataRoot[index].name;
+          //  console.log("false");
         }
+        e = {
+          Email: e,
+          type_id: type,
+          Name: name
+        };
       }
-       else {
-        this.setState({ selectedRowKeys: [] });
-      }
+      this.state.Email.push(e);
     });
-
+    this.setState({ selectedRowKeys: checkMail });
     // this.setState({showEmail: selectedRowKeys})
     console.log("showEmail: ", this.state.Email);
   };
+
+  onSelectChangeReply = selectedRowKeysReply => {
+    var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    const checkMail = []
+    selectedRowKeysReply.map(vl => {
+      if (filter.test(vl) === true) checkMail.push(vl)
+    })
+    this.setState({ selectedRowKeysReply: checkMail })
+  };
+
+  // function disable datetime mail
+  disabledDate = current => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
+  // onChangeDateTime to send
+  onChangeDateTime = value => {
+    if (value === null || value === undefined) {
+      var time = Date.now();
+      this.setState({ TimeSend: time.valueOf() })
+    }
+    else
+      this.setState({ TimeSend: Date.parse(value._d).valueOf() })
+  }
 
   // function send mail
   onSendMail = () => {
     let customers = this.state.Email;
     let subject = this.state.subject;
     let message = this.state.message;
+    let reply = this.state.selectedRowKeysReply;
+    let dateTime = this.state.TimeSend;
     console.log(this.state, ": this.state");
     let formData = new FormData();
     formData.append("subject", subject);
     formData.append("text", message);
+    formData.append("email_reply_to", JSON.stringify(reply));
+    formData.append("time_deliver", dateTime);
     formData.append("list_customers", JSON.stringify(customers));
     console.log(this.state.fileName, ": this.state.fileName");
     this.state.fileList.forEach(file => {
@@ -194,13 +225,7 @@ class ExcelReader extends React.Component {
     });
     console.log(formData, ": formdata");
     this.props.sendMail(formData);
-    this.setState({
-      Email: [],
-      subject: "",
-      message: "",
-      fileList: [],
-      selectedRowKeys: []
-    });
+    this.setState({ isSending: true })
   };
   onClick() {
     const ref = this;
@@ -215,11 +240,26 @@ class ExcelReader extends React.Component {
             setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
           }).catch(() => console.log("Send errors!"));
         },
-        onCancel() {}
+        onCancel() { }
       });
     } else {
       ref.onSendMail();
     }
+  }
+
+  componentWillReceiveProps(nextprops) {
+    if (this.props !== nextprops && nextprops.send.isSended === true) {
+      this.setState({
+        Email: [],
+        subject: "",
+        message: "",
+        fileList: [],
+        selectedRowKeys: [],
+        selectedRowKeysReply: [],
+        TimeSend: Date.now(),
+      });
+    }
+    this.setState({ isSending: nextprops.send.isSending })
   }
 
   render() {
@@ -236,7 +276,7 @@ class ExcelReader extends React.Component {
       multiple: true
       //  transformFile: this.transformFile
     };
-
+    console.log(this.state.isSending, 'selectedRowKeys')
     return (
       <Form>
         <Title level={3}>SEND MAIL</Title>
@@ -253,7 +293,7 @@ class ExcelReader extends React.Component {
                 accept={SheetJSFT}
                 onChange={this.handleChange}
                 style={{ width: 300, marginRight: 10 }}
-                // onClick={this.handleFile}
+              // onClick={this.handleFile}
               />
             </Col>
             <Col flex="auto">
@@ -292,12 +332,12 @@ class ExcelReader extends React.Component {
               dataSource={this.state.data}
             ></Table>
           ) : (
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={this.state.filter}
-            ></Table>
-          )}
+              <Table
+                rowSelection={rowSelection}
+                columns={columns}
+                dataSource={this.state.filter}
+              ></Table>
+            )}
         </Form.Item>
         <div
           className="content_email"
@@ -315,17 +355,28 @@ class ExcelReader extends React.Component {
             value={this.state.selectedRowKeys}
             onChange={this.onSelectChange}
             allowClear
+          ></Select>
+          <Select
+            style={{ width: "100%", textAlign: "left" }}
+            mode="tags"
+            aria-label="maximum height"
+            placeholder="Reply To"
+            value={this.state.selectedRowKeysReply}
+            onChange={this.onSelectChangeReply}
+            allowClear
           />
           <Input
             placeholder="Chủ đề"
             onChange={e => this.setState({ subject: e.target.value })}
             allowClear
+            value={this.state.subject}
           ></Input>
           <TextArea
             rows={6}
             aria-label="maximum height"
             placeholder="Tin nhắn"
             onChange={e => this.setState({ message: e.target.value })}
+            value={this.state.message}
             allowClear
           />
 
@@ -338,15 +389,17 @@ class ExcelReader extends React.Component {
             </Upload>
           </div>
           <div style={{ textAlign: "right" }}>
+            <DatePicker
+              format="YYYY-MM-DD HH:mm:ss"
+              disabledDate={this.disabledDate}
+              onChange={this.onChangeDateTime}
+              showTime
+              style={{marginRight: 20}}
+            />
             <Button
               type="primary"
               onClick={this.onClick}
-              disabled={
-                !this.state.Email[0] ||
-                (this.state.subject === "" &&
-                  this.state.message === "" &&
-                  !this.state.fileList[0])
-              }
+              loading={this.state.isSending}
             >
               Send
             </Button>
@@ -358,7 +411,9 @@ class ExcelReader extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    send: state.reducer
+  };
 };
 
 const mapDispatchToProps = dispatch => {
