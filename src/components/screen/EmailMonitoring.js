@@ -17,7 +17,7 @@ class EmailMonitoring extends Component {
       dataComplaint: [],
       dataUnsub: [],
       dataFiter: [],
-      value: ""
+      value: "",
     };
   }
   componentDidMount = () => {
@@ -59,9 +59,13 @@ class EmailMonitoring extends Component {
         <Tabs defaultActiveKey="1">
           <TabPane tab="Bounces" key="1">
             {this.state.value === "" ? (
-            <TableMonitor data={this.state.dataBounces} type="0"></TableMonitor>
+              <TableMonitor
+                data={this.state.dataBounces}
+                type="0"
+              ></TableMonitor>
             ) : (
-            <TableMonitor data={this.state.dataFiter} type="0"></TableMonitor>)}
+              <TableMonitor data={this.state.dataFiter} type="0"></TableMonitor>
+            )}
           </TabPane>
           <TabPane tab="Complaints" key="2">
             <TableMonitor

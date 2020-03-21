@@ -1,9 +1,8 @@
 import React from "react";
 import { Table, Typography } from "antd";
 import { connect } from "react-redux";
-// import _ from "lodash";
 
-const { Title } = Typography;
+const { Text } = Typography;
 
 export class TableEvent extends React.Component {
   constructor(props) {
@@ -20,7 +19,9 @@ export class TableEvent extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         }
       ],
       [
@@ -35,11 +36,13 @@ export class TableEvent extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
-          title: 'Reason',
-          dataIndex: 'reason'
+          title: "Reason",
+          dataIndex: "reason"
         }
       ],
       [
@@ -53,7 +56,9 @@ export class TableEvent extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         }
       ],
       [
@@ -67,7 +72,9 @@ export class TableEvent extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         }
       ]
     ];
@@ -78,7 +85,7 @@ export class TableEvent extends React.Component {
     };
   }
 
-  loadDataFromProps(props){
+  loadDataFromProps(props) {
     let count = 0;
     let datasrc = props.data.map(e => {
       count++;
@@ -89,7 +96,7 @@ export class TableEvent extends React.Component {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit"
-      }).format(e.timestamp*1000);
+      }).format(e.timestamp * 1000);
       return {
         key: e["id"],
         index: count,
@@ -98,14 +105,14 @@ export class TableEvent extends React.Component {
       };
     });
     this.setState({
-      dataSource: datasrc, count: count
+      dataSource: datasrc,
+      count: count
     });
   }
 
-
   componentDidMount() {
     if (this.props.data !== null) {
-      this.loadDataFromProps(this.props)
+      this.loadDataFromProps(this.props);
     }
     this.setState({
       columns: this.columns[this.props.type]
@@ -115,19 +122,22 @@ export class TableEvent extends React.Component {
     console.log("nextprops", nextprops);
     console.log("type: ", this.props.type);
     if (nextprops !== this.props) {
-      this.loadDataFromProps(nextprops)
-      this.setState({columns: this.columns[nextprops.type]})
+      this.loadDataFromProps(nextprops);
+      this.setState({ columns: this.columns[nextprops.type] });
     }
   }
 
   render() {
     const { dataSource } = this.state;
     console.log(dataSource, "dataSource");
+    const { isLoading } = this.props;
+    // console.log(isLoading,'isLoading');
 
     return (
       <div>
-        <Title level={4}>Count: {this.state.count}</Title>
+        <Text strong>Total: {this.state.count} recipient </Text>
         <Table
+          loading={isLoading}
           dataSource={dataSource}
           columns={this.state.columns}
         />
@@ -137,11 +147,12 @@ export class TableEvent extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    isLoading: state.reducer.isLoading
+  };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-  };
+  return {};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(TableEvent);

@@ -15,7 +15,9 @@ export class TableMonitor extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
           title: "Description",
@@ -28,7 +30,12 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleteURL: 'DeleteBounce'})}
+                onConfirm={() =>
+                  this.handleDelete({
+                    address: record.key,
+                    deleteURL: "DeleteBounce"
+                  })
+                }
               >
                 <Button
                   style={{
@@ -51,7 +58,9 @@ export class TableMonitor extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
           title: "operation",
@@ -60,7 +69,9 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleteURL: ''})}
+                onConfirm={() =>
+                  this.handleDelete({ address: record.key, deleteURL: "" })
+                }
               >
                 <Button
                   style={{
@@ -82,7 +93,9 @@ export class TableMonitor extends React.Component {
         },
         {
           title: "Timestamp",
-          dataIndex: "time"
+          dataIndex: "time",
+          key: "time",
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
           title: "Tags",
@@ -95,7 +108,12 @@ export class TableMonitor extends React.Component {
             this.state.dataSource.length >= 1 ? (
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.handleDelete({address: record.key, deleteURL: 'DeleteUnsubcribe'})}
+                onConfirm={() =>
+                  this.handleDelete({
+                    address: record.key,
+                    deleteURL: "DeleteUnsubcribe"
+                  })
+                }
               >
                 <Button
                   style={{
@@ -118,7 +136,7 @@ export class TableMonitor extends React.Component {
     };
   }
 
-  loadDataFromProps(props){
+  loadDataFromProps(props) {
     let datasrc = props.data.map(e => {
       let timestamp = Date.parse(e.created_at);
       let time = new Intl.DateTimeFormat("en-US", {
@@ -140,25 +158,25 @@ export class TableMonitor extends React.Component {
     });
   }
 
-
   componentDidMount() {
     if (this.props.data !== null) {
-      this.loadDataFromProps(this.props)
+      this.loadDataFromProps(this.props);
     }
     this.setState({
       columns: this.columns[this.props.type]
+      //  loading: false,
     });
   }
   componentWillReceiveProps(nextprops) {
     console.log("nextprops", nextprops);
     console.log("type: ", this.props.type);
     if (nextprops !== this.props) {
-      this.loadDataFromProps(nextprops)
-      this.setState({columns: this.columns[nextprops.type]})
+      this.loadDataFromProps(nextprops);
+      this.setState({ columns: this.columns[nextprops.type] });
     }
   }
 
-  handleDelete = (monitor) => {
+  handleDelete = monitor => {
     const dataSource = [...this.state.dataSource];
     this.props.deleteMail(monitor);
     this.setState({
@@ -169,21 +187,21 @@ export class TableMonitor extends React.Component {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
-  
+
   //xét type của tab
   handleDeleteSelectMail = () => {
-    let deleteURL ;
-    if (this.props.type === '0') deleteURL = 'DeleteBounce'
-    if (this.props.type === '1') deleteURL = ''
-    if (this.props.type === '2') deleteURL = 'DeleteUnsubcribe'
+    let deleteURL;
+    if (this.props.type === "0") deleteURL = "DeleteBounce";
+    if (this.props.type === "1") deleteURL = "";
+    if (this.props.type === "2") deleteURL = "DeleteUnsubcribe";
     let { selectedRowKeys } = this.state;
     let { dataSource } = this.state;
     selectedRowKeys.map(address => {
-      this.props.deleteMail({address: address, deleteURL: deleteURL});
+      this.props.deleteMail({ address: address, deleteURL: deleteURL });
       dataSource = dataSource.filter(item => item.address !== address);
     });
     this.setState({ dataSource });
-    console.log(dataSource);
+    // console.log(dataSource);
   };
 
   render() {
@@ -192,6 +210,7 @@ export class TableMonitor extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange
     };
+    const { isLoading } = this.props;
 
     const { dataSource } = this.state;
     console.log(dataSource, "dataSource");
@@ -212,6 +231,7 @@ export class TableMonitor extends React.Component {
           Remove Selected
         </Button>
         <Table
+          loading={isLoading}
           dataSource={dataSource}
           columns={this.state.columns}
           rowSelection={rowSelection}
@@ -222,7 +242,9 @@ export class TableMonitor extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    isLoading: state.reducer.isLoading
+  };
 };
 
 const mapDispatchToProps = dispatch => {
