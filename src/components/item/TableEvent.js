@@ -124,7 +124,7 @@ export class TableEvent extends React.Component {
   componentWillReceiveProps(nextprops) {
     console.log("nextprops", nextprops);
     console.log("type: ", this.props.type);
-    if (nextprops !== this.props) {
+    if (nextprops !== this.props && nextprops.data !== null) {
       this.loadDataFromProps(nextprops);
       this.setState({ columns: this.columns[nextprops.type] });
     }
