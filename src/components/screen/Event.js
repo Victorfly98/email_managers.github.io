@@ -32,40 +32,38 @@ class Event extends Component {
             });
         }
     }
-    handleSearch = value => {
-
-    };
-
     render() {
         return (
             <div>
                 <Title level={3}>EVENT</Title>
                 <Search
                     placeholder="Seach for recipient"
-
+                    onSearch={vl => {
+                        this.setState({ value: vl });
+                    }}
                     style={{ width: 200 }}
                 />
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Delivered" key="1">
-                        {this.state.value === "" ? (
-                            <TableEvent data={this.state.dataDelivered} type="0"></TableEvent>
-                        ) : (
-                                <TableEvent data={this.state.dataDelivered} type="0"></TableEvent>)}
+                        <TableEvent data={this.state.dataDelivered} type="0" search={this.state.value} ></TableEvent>
                     </TabPane>
                     <TabPane tab="Failed Email" key="2">
                         <TableEvent
                             data={this.state.dataFailedEmail}
                             type="1"
+                            search={this.state.value}
                         ></TableEvent>
                     </TabPane>
                     <TabPane tab="Opened" key="3">
-                        <TableEvent 
+                        <TableEvent
                             data={this.state.dataOpened} type="2"
+                            search={this.state.value}
                         ></TableEvent>
                     </TabPane>
                     <TabPane tab="Clicked" key="4">
-                        <TableEvent 
+                        <TableEvent
                             data={this.state.dataClicked} type="3"
+                            search={this.state.value}
                         ></TableEvent>
                     </TabPane>
                     {/* <Title level={4}>Count: {this.state.count}</Title> */}

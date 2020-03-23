@@ -11,7 +11,7 @@ import {
   getClickedAPI
 } from "../api/sendMailAPI";
 import { call, takeEvery, put } from "redux-saga/effects";
-import { notification } from "antd";
+import { notification, Modal } from "antd";
 
 export function* saga_send_mail(action) {
   try {
@@ -37,6 +37,11 @@ export function* saga_send_mail(action) {
       });
     }
   } catch (error) {
+    yield put(
+      actions.action.updateState({
+        isSending: false
+      })
+    );
     console.log(error);
     notification.error({
       message: "Gửi email thất bại",
@@ -59,6 +64,15 @@ export function* saga_get_monitor_mail(action) {
       })
     );
   } catch (error) {
+    yield put(
+      actions.action.updateState({
+        isLoading: false
+      })
+    );
+    Modal.error({
+      title: "Gửi email thất bại",
+      content: "Có lỗi trong quá trình kết nối với server"
+    });
     console.log(error);
   }
 }
@@ -79,6 +93,15 @@ export function* saga_get_event(action) {
       })
     );
   } catch (error) {
+    yield put(
+      actions.action.updateState({
+        isLoading: false
+      })
+    );
+    Modal.error({
+      title: "Gửi email thất bại",
+      content: "Có lỗi trong quá trình kết nối với server"
+    });
     console.log(error);
   }
 }

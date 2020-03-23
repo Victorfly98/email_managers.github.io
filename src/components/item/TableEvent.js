@@ -87,7 +87,10 @@ export class TableEvent extends React.Component {
 
   loadDataFromProps(props) {
     let count = 0;
-    let datasrc = props.data.map(e => {
+    let datasrc = props.data.filter(vl => {
+      return vl.address.indexOf(props.search) !== -1;
+    });
+    datasrc = datasrc.map(e => {
       count++;
       let time = new Intl.DateTimeFormat("en-US", {
         year: "numeric",

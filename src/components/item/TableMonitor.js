@@ -137,7 +137,10 @@ export class TableMonitor extends React.Component {
   }
 
   loadDataFromProps(props) {
-    let datasrc = props.data.map(e => {
+    let datasrc = props.data.filter(vl => {
+      return vl.address.indexOf(props.search) !== -1;
+    });
+    datasrc = datasrc.map(e => {
       let timestamp = Date.parse(e.created_at);
       let time = new Intl.DateTimeFormat("en-US", {
         year: "numeric",
@@ -173,6 +176,7 @@ export class TableMonitor extends React.Component {
     if (nextprops !== this.props) {
       this.loadDataFromProps(nextprops);
       this.setState({ columns: this.columns[nextprops.type] });
+      console.log("search: ", nextprops.search);
     }
   }
 

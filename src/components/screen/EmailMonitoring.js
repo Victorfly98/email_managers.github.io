@@ -32,13 +32,6 @@ class EmailMonitoring extends Component {
       });
     }
   }
-  handleSearch = value => {
-    const colunmkey = this.state.dataBounces.filter(vl => {
-      return vl.address.indexOf(value) !== -1;
-    });
-    this.setState({ dataFiter: colunmkey });
-    console.log(this.state.value, "value");
-  };
 
   render() {
     console.log(this.state.dataFiter, "dataseach");
@@ -50,31 +43,27 @@ class EmailMonitoring extends Component {
           placeholder="Seach for recipient"
           onSearch={vl => {
             this.setState({ value: vl });
-            console.log(vl, ": value");
-            this.handleSearch(vl);
           }}
           // value={this.state.searchText}
           style={{ width: 200 }}
         />
         <Tabs defaultActiveKey="1">
           <TabPane tab="Bounces" key="1">
-            {this.state.value === "" ? (
               <TableMonitor
                 data={this.state.dataBounces}
                 type="0"
+                search={this.state.value}
               ></TableMonitor>
-            ) : (
-              <TableMonitor data={this.state.dataFiter} type="0"></TableMonitor>
-            )}
           </TabPane>
           <TabPane tab="Complaints" key="2">
             <TableMonitor
               data={this.state.dataComplaint}
               type="1"
+              search={this.state.value}
             ></TableMonitor>
           </TabPane>
           <TabPane tab="Unsubscribes" key="3">
-            <TableMonitor data={this.state.dataUnsub} type="2"></TableMonitor>
+            <TableMonitor data={this.state.dataUnsub} type="2" search={this.state.value}></TableMonitor>
           </TabPane>
         </Tabs>
       </div>
