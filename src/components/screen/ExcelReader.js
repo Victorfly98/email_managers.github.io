@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import React from "react";
 import _ from "lodash";
 import { SheetJSFT } from "../readExcelFile/types.js";
@@ -13,10 +14,15 @@ import {
   Row,
   Col,
   Modal,
-  Alert,
-  DatePicker,
+  Dropdown,
+  Menu,
+  DatePicker
 } from "antd";
-import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  ExclamationCircleOutlined,
+  FieldTimeOutlined
+} from "@ant-design/icons";
 import "antd/dist/antd.css";
 import getAction from "../../redux/action";
 import { connect } from "react-redux";
@@ -24,7 +30,7 @@ import moment from "moment";
 
 const { confirm } = Modal;
 const { Option } = Select;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 const columns = [
   {
@@ -57,13 +63,16 @@ class ExcelReader extends React.Component {
       fileName: [],
       selectedRowKeysReply: [],
       TimeSend: Date.now(),
-      isSending: false
+      isSending: false,
+      visible: false,
+      loading: false,
+      visibleErr: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleFile = this.handleFile.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onSendMail = this.onSendMail.bind(this);
-    this.onClick = this.onClick.bind(this);
+    this.onClickSend = this.onClickSend.bind(this);
   }
 
   //click select file
@@ -149,11 +158,11 @@ class ExcelReader extends React.Component {
   onSelectChange = selectedRowKeys => {
     const dataRoot = this.state.data;
     var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    this.state.Email = []
-    const checkMail = []
+    this.setState({ Emai: [] });
+    const checkMail = [];
     selectedRowKeys.map(vl => {
-      if (filter.test(vl) === true) checkMail.push(vl)
-    })
+      if (filter.test(vl) === true) checkMail.push(vl);
+    });
     checkMail.map(e => {
       if (e.type === undefined) {
         let type;
@@ -183,27 +192,25 @@ class ExcelReader extends React.Component {
 
   onSelectChangeReply = selectedRowKeysReply => {
     var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    const checkMail = []
+    const checkMail = [];
     selectedRowKeysReply.map(vl => {
-      if (filter.test(vl) === true) checkMail.push(vl)
-    })
-    this.setState({ selectedRowKeysReply: checkMail })
+      if (filter.test(vl) === true) checkMail.push(vl);
+    });
+    this.setState({ selectedRowKeysReply: checkMail });
   };
 
   // function disable datetime mail
   disabledDate = current => {
     // Can not select days before today and today
-    return current && current < moment().endOf('day');
-  }
+    return current && current < moment().endOf("day");
+  };
   // onChangeDateTime to send
   onChangeDateTime = value => {
     if (value === null || value === undefined) {
       var time = Date.now();
-      this.setState({ TimeSend: time.valueOf() })
-    }
-    else
-      this.setState({ TimeSend: Date.parse(value._d).valueOf() })
-  }
+      this.setState({ TimeSend: time.valueOf() });
+    } else this.setState({ TimeSend: Date.parse(value._d).valueOf() });
+  };
 
   // function send mail
   onSendMail = () => {
@@ -225,27 +232,52 @@ class ExcelReader extends React.Component {
     });
     console.log(formData, ": formdata");
     this.props.sendMail(formData);
-    this.setState({ isSending: true })
+    this.setState({ isSending: true });
   };
-  onClick() {
-    const ref = this;
-    if (this.state.subject === "" && this.state.message === "") {
-      confirm({
-        title: "Do you want to send mail?",
-        icon: <ExclamationCircleOutlined />,
-        content: "Subject or Message is null.",
-        onOk() {
-          ref.onSendMail();
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Send errors!"));
-        },
-        onCancel() { }
+  onClickSend() {
+    if (!this.state.Email[0]) {
+      Modal.error({
+        title: "Error",
+        content: "Please specify at least one recipient."
       });
+      // this.setState({ visibleErr: true });
     } else {
-      ref.onSendMail();
+      this.setState({ visibleErr: false });
+      const ref = this;
+      if (this.state.subject === "" && this.state.message === "") {
+        confirm({
+          title: "Do you want to send mail?",
+          icon: <ExclamationCircleOutlined />,
+          content: "Subject or Message is null.",
+          onOk() {
+            ref.onSendMail();
+            return new Promise((resolve, reject) => {
+              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+            }).catch(() => console.log("Send errors!"));
+          },
+          onCancel() {}
+        });
+      } else {
+        ref.onSendMail();
+      }
     }
   }
+
+  showModalChoseTime = () => {
+    this.setState({ visible: true });
+  };
+  handleOk = () => {
+    this.setState({ loading: true });
+    setTimeout(() => {
+      this.setState({ loading: false, visible: false });
+    }, 3000);
+    const ref = this;
+    ref.onClickSend();
+  };
+
+  handleCancel = () => {
+    this.setState({ visible: false });
+  };
 
   componentWillReceiveProps(nextprops) {
     if (this.props !== nextprops && nextprops.send.isSended === true) {
@@ -256,10 +288,10 @@ class ExcelReader extends React.Component {
         fileList: [],
         selectedRowKeys: [],
         selectedRowKeysReply: [],
-        TimeSend: Date.now(),
+        TimeSend: Date.now()
       });
     }
-    this.setState({ isSending: nextprops.send.isSending })
+    this.setState({ isSending: nextprops.send.isSending });
   }
 
   render() {
@@ -276,7 +308,7 @@ class ExcelReader extends React.Component {
       multiple: true
       //  transformFile: this.transformFile
     };
-    console.log(this.state.isSending, 'selectedRowKeys')
+    console.log(this.state.isSending, "selectedRowKeys");
     return (
       <Form>
         <Title level={3}>SEND MAIL</Title>
@@ -293,7 +325,7 @@ class ExcelReader extends React.Component {
                 accept={SheetJSFT}
                 onChange={this.handleChange}
                 style={{ width: 300, marginRight: 10 }}
-              // onClick={this.handleFile}
+                // onClick={this.handleFile}
               />
             </Col>
             <Col flex="auto">
@@ -332,12 +364,12 @@ class ExcelReader extends React.Component {
               dataSource={this.state.data}
             ></Table>
           ) : (
-              <Table
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={this.state.filter}
-              ></Table>
-            )}
+            <Table
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={this.state.filter}
+            ></Table>
+          )}
         </Form.Item>
         <div
           className="content_email"
@@ -389,20 +421,58 @@ class ExcelReader extends React.Component {
             </Upload>
           </div>
           <div style={{ textAlign: "right" }}>
-            <DatePicker
-              format="YYYY-MM-DD HH:mm:ss"
-              disabledDate={this.disabledDate}
-              onChange={this.onChangeDateTime}
-              showTime
-              style={{marginRight: 20}}
-            />
             <Button
               type="primary"
-              onClick={this.onClick}
+              onClick={this.onClickSend}
               loading={this.state.isSending}
+              disabled={
+                this.state.subject === "" &&
+                this.state.message === "" &&
+                !this.state.fileList[0]
+              }
             >
               Send
             </Button>
+            <Dropdown
+              disabled={
+                this.state.subject === "" &&
+                this.state.message === "" &&
+                !this.state.fileList[0]
+              }
+              placement="topCenter"
+              overlay={
+                <Menu onClick={this.showModalChoseTime}>
+                  <Menu.Item>Send on schedule</Menu.Item>
+                </Menu>
+              }
+            >
+              <Button type="primary">
+                <FieldTimeOutlined />
+              </Button>
+            </Dropdown>
+            <Modal
+              title="Chose date and time"
+              visible={this.state.visible}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+              footer={[
+                <Button key="back" onClick={this.handleCancel}>
+                  Cancel
+                </Button>,
+                <Button type="primary" key="summit" onClick={this.handleOk}>
+                  Send
+                </Button>
+              ]}
+            >
+              <DatePicker
+                format="YYYY-MM-DD HH:mm:ss"
+                disabledDate={this.disabledDate}
+                onChange={this.onChangeDateTime}
+                showTime
+                style={{ marginRight: 20 }}
+              />
+            </Modal>
+            <Modal visible={this.state.visibleErr} title="Error" icon></Modal>
           </div>
         </div>
       </Form>
