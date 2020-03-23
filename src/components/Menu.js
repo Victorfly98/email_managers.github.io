@@ -1,19 +1,21 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu, Typography, Avatar } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   SendOutlined,
-  MailOutlined,
+  FilterOutlined,
   CloseSquareOutlined,
   HomeOutlined,
-  EyeOutlined
+  EyeOutlined,
+  MailOutlined
 } from "@ant-design/icons";
 import "../css/Menu.css";
-import ExcelReader from "./screen/ExcelReader";
+import SendMail from "./screen/SendMail";
 import FillterMail from "./screen/FillterMail";
-import EmailMonitoring from "./screen/EmailMonitoring";
+import Suppressions from "./screen/Suppressions";
 import Event from "./screen/Event";
 import avatar from "./../img/avatar.jpeg";
 import logo from "./../img/logo11.png";
@@ -59,11 +61,11 @@ class RouterApp extends Component {
               ) : (
                 <h3>
                   <Link to="/">
-                    <div>
+                    <div className="logo">
                       <img
                         src={logo}
-                        style={{ width: "100%", height: 60 }}
-                      ></img>
+                        style={{ width: "100%", height: 50 }}
+                      />
                     </div>
                     {/* {siteConfig.siteName} */}
                   </Link>
@@ -79,21 +81,21 @@ class RouterApp extends Component {
               <Menu.Item key="2">
                 <SendOutlined />
                 <span>Send Mail</span>
-                <Link to="/ExcelReader" />
+                <Link to="/SendMail" />
               </Menu.Item>
               <Menu.Item key="3">
-                <MailOutlined />
+                <FilterOutlined />
                 <span>Fillter Email</span>
                 <Link to="/FillterEmail" />
               </Menu.Item>
               <Menu.Item key="4">
                 <CloseSquareOutlined />
-                <span>Email Monitoring</span>
-                <Link to="/EmailMonitoring" />
+                <span>Suppressions</span>
+                <Link to="/Suppressions" />
               </Menu.Item>
               <Menu.Item key="5">
-                <CloseSquareOutlined />
-                <span>Event</span>
+                <MailOutlined />
+                <span>Event Email</span>
                 <Link to="/Event" />
               </Menu.Item>
             </Menu>
@@ -118,10 +120,7 @@ class RouterApp extends Component {
                   }
                 )}
                 <Title level={2}>MAIL MANAGER</Title>
-                <img
-                  src={avatar}
-                  style={{ width: 50, height: 50, borderRadius: 25 }}
-                ></img>
+                <Avatar size="large" src={avatar}></Avatar>
               </Header>
             </div>
             <Content
@@ -132,15 +131,15 @@ class RouterApp extends Component {
                 minHeight: 280
               }}
             >
-              <Route exact path="/ExcelReader" component={ExcelReader} />
+              <Route exact path="/SendMail" component={SendMail} />
               <Route exact path="/FillterEmail" component={FillterMail} />
               <Route exact path="/Overview" component={Overview} />
               <Route exact path="/" component={Overview} />
               <Route exact path="/Event" component={Event} />
               <Route
                 exact
-                path="/EmailMonitoring"
-                component={EmailMonitoring}
+                path="/Suppressions"
+                component={Suppressions}
               />
             </Content>
             <Footer style={{ textAlign: "center" }}>

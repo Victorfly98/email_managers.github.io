@@ -35,7 +35,7 @@ class Event extends Component {
     render() {
         return (
             <div>
-                <Title level={3}>EVENT</Title>
+                <Title level={3}>EVENT EMAIL</Title>
                 <Search
                     placeholder="Seach for recipient"
                     onSearch={vl => {

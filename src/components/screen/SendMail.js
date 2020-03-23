@@ -158,7 +158,7 @@ class ExcelReader extends React.Component {
   onSelectChange = selectedRowKeys => {
     const dataRoot = this.state.data;
     var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    this.setState({ Emai: [] });
+    this.setState({ Email: [] });
     const checkMail = [];
     selectedRowKeys.map(vl => {
       if (filter.test(vl) === true) checkMail.push(vl);

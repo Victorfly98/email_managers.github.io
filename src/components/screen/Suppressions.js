@@ -38,7 +38,7 @@ class EmailMonitoring extends Component {
     console.log(this.state.value, "value");
     return (
       <div>
-        <Title level={3}>EMAIL MONITORING</Title>
+        <Title level={3}>SUPRESSIONS</Title>
         <Search
           placeholder="Seach for recipient"
           onSearch={vl => {
