@@ -15,7 +15,8 @@ class ListCustomer extends Component {
       listCustomer: [],
       listFilter: [],
       visibled: false,
-      type: ""
+      type: "",
+      pageNumber: 1
     };
     this.columns = [
       [
@@ -31,7 +32,7 @@ class ListCustomer extends Component {
         },
         {
           title: "Number of Customer",
-          dataIndex: "sum"
+          dataIndex: "numbers"
         },
         {
           title: " ",
@@ -74,46 +75,40 @@ class ListCustomer extends Component {
     this.props.getListTypeCustomer();
   };
   componentWillReceiveProps = nextprops => {
-    if (nextprops.listTypeCustomer !== this.props.getListTypeCustomer) {
-      let groupTypes = _.groupBy(
-        nextprops.listTypeCustomer.listTypeCustomer,
-        "userId"
-      );
-      var count = 0;
-      var listType = Object.keys(groupTypes).map(function(key) {
-        count++;
-        return { key: key, sum: groupTypes[key].length, index: count };
-      });
-      var listCustomerByType = Object.keys(groupTypes).map(function(key) {
-        count++;
-        return [key, groupTypes[key]];
-      });
-      console.log(listCustomerByType, "a");
+    if (nextprops !== this.props && nextprops.data.listTypeCustomer !== undefined ) {
+      var count = 0
+      const dataType =  nextprops.data.listTypeCustomer.map(vl =>{
+        count++
+        return {
+          key: vl.type_customers,
+          index: count,
+          ...vl
+        }
+      })
       this.setState({
-        listTypeCustomer: listType,
-        listCustomer: listCustomerByType
+        listTypeCustomer: dataType,
       });
     }
-  };
-  showListCustomer = type => {
-    console.log(type, "type");
-    const listCustomer = this.state.listCustomer.filter(
-      item => item[0] === type
-    );
-    // console.log(listCustomer, "aaaaa");
-    // console.log(listCustomer[0][1], "2323");
-    this.setState({
-      listFilter: listCustomer[0][1],
-      visibled: true
-    });
-  };
+   };
+  // showListCustomer = type => {
+  //   console.log(type, "type");
+  //   const listCustomer = this.state.listCustomer.filter(
+  //     item => item[0] === type
+  //   );
+  //   // console.log(listCustomer, "aaaaa");
+  //   // console.log(listCustomer[0][1], "2323");
+  //   this.setState({
+  //     listFilter: listCustomer[0][1],
+  //     visibled: true
+  //   });
+  // };
   onChangePage(pageNumber) {
     console.log("Page: ", pageNumber);
   }
 
   render() {
     console.log(this.state.listTypeCustomer, "listType");
-    console.log(this.state.listFilter, "listFilter");
+    // console.log(this.state.listFilter, "listFilter");
 
     return (
       <div className="list_type_customer">
@@ -121,16 +116,8 @@ class ListCustomer extends Component {
         <Table
           columns={this.columns[0]}
           dataSource={this.state.listTypeCustomer}
-          pagination={false}
         />
-        <Pagination
-          style={{ padding: 10, textAlign: "center" }}
-          showQuickJumper
-          defaultCurrent={2}
-          total={10}
-          onChange={this.onChangePage}
-        />
-        <Modal
+        {/* <Modal
           width="70%"
           title="LIST CUSTOMER"
           style={{ textAlign: "center" }}
@@ -152,7 +139,7 @@ class ListCustomer extends Component {
             total={10}
             onChange={this.onChangePage}
           />
-        </Modal>
+        </Modal> */}
       </div>
     );
   }
@@ -160,8 +147,7 @@ class ListCustomer extends Component {
 
 const mapStateToProps = state => {
   return {
-    isLoading: state.reducer,
-    listTypeCustomer: state.reducer
+    data: state.reducer
   };
 };
 

@@ -86,7 +86,7 @@ export const getClickedAPI = async () => {
 
 export const getListTypeCustomerAPI = async () => {
   try {
-    const res = await axios.get(`http://jsonplaceholder.typicode.com/posts`);
+    const res = await axios.get(`http://192.168.100.94:8787/v1/emailauthen/customers/GetTotalTypeCustomers`);
     console.log(res.data, 'res');
     return res.data;
   } catch (error) {
