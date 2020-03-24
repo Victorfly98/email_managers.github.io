@@ -47,7 +47,7 @@ export const getUnsubscribesAPI = async () => {
 export const getDeliveredAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `PrintEventLog?param=delivered`);
-    console.log(res.data, 'res');
+    // console.log(res.data, 'res');
     return res.data;
   } catch (error) {
     return console.log("error: ", error);
@@ -57,7 +57,7 @@ export const getDeliveredAPI = async () => {
 export const getFailedAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `PrintEventLog?param=failed`);
-    console.log(res.data, 'res');
+    // console.log(res.data, 'res');
     return res.data;
   } catch (error) {
     return console.log("error: ", error);
@@ -67,7 +67,7 @@ export const getFailedAPI = async () => {
 export const getOpenedAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `PrintEventLog?param=opened`);
-    console.log(res.data, 'res');
+    // console.log(res.data, 'res');
     return res.data;
   } catch (error) {
     return console.log("error: ", error);
@@ -77,13 +77,31 @@ export const getOpenedAPI = async () => {
 export const getClickedAPI = async () => {
   try {
     const res = await axios.get(BASE_API + `PrintEventLog?param=clicked`);
-    console.log(res.data, 'res');
+    // console.log(res.data, 'res');
     return res.data;
   } catch (error) {
     return console.log("error: ", error);
   }
 };
 
+export const getListTypeCustomerAPI = async () => {
+  try {
+    const res = await axios.get(`http://jsonplaceholder.typicode.com/posts`);
+    console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
+export const getListCustomerAPI = async (userId) => {
+  try {
+    const res = await axios.get(`http://jsonplaceholder.typicode.com/ports?userId=${userId}`);
+    console.log(res.data, 'res');
+    return res.data;
+  } catch (error) {
+    return console.log("error: ", error);
+  }
+};
 export const deleteMonitorMailAPI = async (address, deleteUrl) => {
   try {
     const res = await axios.delete(

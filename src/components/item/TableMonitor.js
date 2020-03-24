@@ -102,7 +102,7 @@ export class TableMonitor extends React.Component {
           dataIndex: "tags"
         },
         {
-          title: " ",
+          title: "",
           dataIndex: "operation",
           render: (text, record) =>
             this.state.dataSource.length >= 1 ? (

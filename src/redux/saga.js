@@ -8,7 +8,9 @@ import {
   getDeliveredAPI,
   getFailedAPI,
   getOpenedAPI,
-  getClickedAPI
+  getClickedAPI,
+  getListTypeCustomerAPI,
+  getListCustomerAPI,
 } from "../api/sendMailAPI";
 import { call, takeEvery, put } from "redux-saga/effects";
 import { notification, Modal } from "antd";
@@ -106,6 +108,52 @@ export function* saga_get_event(action) {
   }
 }
 
+export function* saga_list_type_customer(action) {
+  try {
+    const type_customer = yield call(getListTypeCustomerAPI);
+    if(type_customer !== undefined)
+    yield put(
+      actions.action.updateState({
+        listTypeCustomer: type_customer
+      })
+    );
+  } catch (error) {
+    yield put(
+      actions.action.updateState({
+        isLoading: false
+      })
+    );
+    Modal.error({
+      title: "Lấy danh sách loại khách hàng thất bại",
+      content: "Có lỗi trong quá trình kết nối với server"
+    });
+    console.log(error);
+  }
+}
+
+export function* saga_list_customer(action) {
+  try {
+    const list_customer = yield call(getListCustomerAPI);
+    if(list_customer !== undefined)
+    yield put(
+      actions.action.updateState({
+        getListCustomer: list_customer
+      })
+    );
+  } catch (error) {
+    yield put(
+      actions.action.updateState({
+        isLoading: false
+      })
+    );
+    Modal.error({
+      title: "Lấy danh sách loại khách hàng thất bại",
+      content: "Có lỗi trong quá trình kết nối với server"
+    });
+    console.log(error);
+  }
+}
+
 export function* saga_delete_monitor_mail(action) {
   try {
     console.log(action.payload, 'aasdasdasd');
@@ -123,4 +171,7 @@ export default function* listen() {
   yield takeEvery(actions.type.GET_MONITOR_EMAIL, saga_get_monitor_mail);
   yield takeEvery(actions.type.DELETE_MONITOR_EMAIL, saga_delete_monitor_mail);
   yield takeEvery(actions.type.GET_EVENT, saga_get_event);
+  yield takeEvery(actions.type.GET_LIST_TYPE_CUSTOMER, saga_list_type_customer);
+  yield takeEvery(actions.type.GET_LIST_CUSTOMER, saga_list_customer);
+
 }

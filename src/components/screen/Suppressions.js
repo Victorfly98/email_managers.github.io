@@ -16,12 +16,11 @@ class EmailMonitoring extends Component {
       dataBounces: [],
       dataComplaint: [],
       dataUnsub: [],
-      dataFiter: [],
       value: "",
     };
   }
   componentDidMount = () => {
-    this.props.getMonitorEmail();
+    this.props.getMonitorEmail();  
   };
   componentWillReceiveProps(nextprops) {
     if (nextprops.monitor !== this.props.monitor) {
@@ -34,7 +33,6 @@ class EmailMonitoring extends Component {
   }
 
   render() {
-    console.log(this.state.dataFiter, "dataseach");
     console.log(this.state.value, "value");
     return (
       <div>

@@ -10,13 +10,15 @@ import {
   CloseSquareOutlined,
   HomeOutlined,
   EyeOutlined,
-  MailOutlined
+  MailOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 import "../css/Menu.css";
 import SendMail from "./screen/SendMail";
 import FillterMail from "./screen/FillterMail";
 import Suppressions from "./screen/Suppressions";
 import Event from "./screen/Event";
+import ListCustomer from "./screen/ListCustomer"
 import avatar from "./../img/avatar.jpeg";
 import logo from "./../img/logo11.png";
 import Overview from "./screen/Overview";
@@ -62,10 +64,7 @@ class RouterApp extends Component {
                 <h3>
                   <Link to="/">
                     <div className="logo">
-                      <img
-                        src={logo}
-                        style={{ width: "100%", height: 50 }}
-                      />
+                      <img src={logo} style={{ width: "100%", height: 50 }} />
                     </div>
                     {/* {siteConfig.siteName} */}
                   </Link>
@@ -97,6 +96,11 @@ class RouterApp extends Component {
                 <MailOutlined />
                 <span>Event Email</span>
                 <Link to="/Event" />
+              </Menu.Item>
+              <Menu.Item key="6">
+                <TeamOutlined />
+                <span>List Customer</span>
+                <Link to="/ListCustomer" />
               </Menu.Item>
             </Menu>
           </Sider>
@@ -136,11 +140,8 @@ class RouterApp extends Component {
               <Route exact path="/Overview" component={Overview} />
               <Route exact path="/" component={Overview} />
               <Route exact path="/Event" component={Event} />
-              <Route
-                exact
-                path="/Suppressions"
-                component={Suppressions}
-              />
+              <Route exact path="/Suppressions" component={Suppressions} />
+              <Route exact path="/ListCustomer" component={ListCustomer} />
             </Content>
             <Footer style={{ textAlign: "center" }}>
               Mail Manager by Vinh Hau

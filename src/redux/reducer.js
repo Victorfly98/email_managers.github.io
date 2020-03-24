@@ -37,6 +37,18 @@ const reducer = (state = initialState, action) => {
                 isLoading: true
             }
         }
+        case actions.type.GET_LIST_TYPE_CUSTOMER: {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
+        case actions.type.GET_LIST_CUSTOMER: {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
         case actions.type.UPDATE_STATE:
             return {
                 ...state,
