@@ -16,7 +16,8 @@ class ListCustomer extends Component {
       listFilter: [],
       visibled: false,
       type: "",
-      pageNumber: 1
+      pageNumber: 1,
+      countCustomer: 0
     };
     this.columns = [
       [
@@ -90,24 +91,16 @@ class ListCustomer extends Component {
       });
     }
    };
-  // showListCustomer = type => {
-  //   console.log(type, "type");
-  //   const listCustomer = this.state.listCustomer.filter(
-  //     item => item[0] === type
-  //   );
-  //   // console.log(listCustomer, "aaaaa");
-  //   // console.log(listCustomer[0][1], "2323");
-  //   this.setState({
-  //     listFilter: listCustomer[0][1],
-  //     visibled: true
-  //   });
-  // };
+    showListCustomer = type => {
+      this.setState({visibled: true})
+      this.setState({countCustomer :this.state.listTypeCustomer.filter(vl => vl.type_customers === type)[0].numbers});
+    };
   onChangePage(pageNumber) {
     console.log("Page: ", pageNumber);
   }
 
   render() {
-    console.log(this.state.listTypeCustomer, "listType");
+    console.log(this.state.countCustomer, "listType");
     // console.log(this.state.listFilter, "listFilter");
 
     return (
@@ -117,7 +110,7 @@ class ListCustomer extends Component {
           columns={this.columns[0]}
           dataSource={this.state.listTypeCustomer}
         />
-        {/* <Modal
+        <Modal
           width="70%"
           title="LIST CUSTOMER"
           style={{ textAlign: "center" }}
@@ -129,17 +122,17 @@ class ListCustomer extends Component {
         >
           <Table
             columns={this.columns[1]}
-            dataSource={this.state.listFilter}
+          //  dataSource={this.state.listFilter}
             pagination={false}
           />
           <Pagination
             style={{ padding: 10, textAlign: "center" }}
             showQuickJumper
             defaultCurrent={2}
-            total={10}
+            total={this.state.countCustomer}
             onChange={this.onChangePage}
           />
-        </Modal> */}
+        </Modal>
       </div>
     );
   }
