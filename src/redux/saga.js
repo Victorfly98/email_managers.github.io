@@ -133,7 +133,8 @@ export function* saga_list_type_customer(action) {
 
 export function* saga_list_customer(action) {
   try {
-    const list_customer = yield call(getListCustomerAPI);
+    const {type_customers, page_number} = action.payload.infoPage
+    const list_customer = yield call(getListCustomerAPI, type_customers, page_number);
     if(list_customer !== undefined)
     yield put(
       actions.action.updateState({

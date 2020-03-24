@@ -44,11 +44,11 @@ const action = {
       payload: {}
     };
   },
-  getListCustomer: (id) => {
+  getListCustomer: (infoPage) => {
     return {
       type: type.GET_LIST_CUSTOMER,
       payload: {
-          id
+        infoPage
       }
     };
   },

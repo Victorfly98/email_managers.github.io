@@ -93,9 +93,9 @@ export const getListTypeCustomerAPI = async () => {
     return console.log("error: ", error);
   }
 };
-export const getListCustomerAPI = async (userId) => {
+export const getListCustomerAPI = async (type_custumers, page_number) => {
   try {
-    const res = await axios.get(`http://jsonplaceholder.typicode.com/ports?userId=${userId}`);
+    const res = await axios.get(`http://192.168.100.94:8787/v1/emailauthen/customers/GetListCustomersByRange?type_customers=${type_custumers}&page_number=${page_number}`);
     console.log(res.data, 'res');
     return res.data;
   } catch (error) {

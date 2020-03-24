@@ -16,8 +16,9 @@ class ListCustomer extends Component {
       listFilter: [],
       visibled: false,
       type: "",
-      pageNumber: 1,
-      countCustomer: 0
+      countCustomer: 0,
+      type_customers: "",
+      pageNumber: 1
     };
     this.columns = [
       [
@@ -56,17 +57,17 @@ class ListCustomer extends Component {
       [
         {
           title: "STT",
-          dataIndex: "id"
+          dataIndex: "index"
         },
         {
           title: "Customer Name",
-          dataIndex: "title"
+          dataIndex: "Name"
           //   key: "time",
           //   sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
           title: "Customer Email",
-          dataIndex: "body"
+          dataIndex: "key"
         }
       ]
     ];
@@ -76,33 +77,50 @@ class ListCustomer extends Component {
     this.props.getListTypeCustomer();
   };
   componentWillReceiveProps = nextprops => {
-    if (nextprops !== this.props && nextprops.data.listTypeCustomer !== undefined ) {
-      var count = 0
-      const dataType =  nextprops.data.listTypeCustomer.map(vl =>{
-        count++
-        return {
-          key: vl.type_customers,
-          index: count,
-          ...vl
-        }
-      })
-      this.setState({
-        listTypeCustomer: dataType,
-      });
+    if (nextprops !== this.props) {
+      if (nextprops.data.listTypeCustomer !== this.props.data.listTypeCustomer) {
+        var count = 0
+        const dataType = nextprops.data.listTypeCustomer.map(vl => {
+          count++
+          return {
+            key: vl.type_customers,
+            index: count,
+            ...vl
+          }
+        })
+        this.setState({
+          listTypeCustomer: dataType
+        })
+      }
+      if (nextprops.data.getListCustomer !== this.props.data.getListCustomer) {
+        console.log(nextprops.data.getListCustomer,'nextprops.data.getListCustomer')
+        var countCustomer = this.state.pageNumber * 10 - 10
+        const listCustomer = nextprops.data.getListCustomer.map(vl => {
+          countCustomer = countCustomer + 1
+          return {
+            index: countCustomer,
+            key: vl.Email,
+            ...vl
+          }
+        })
+        this.setState({
+          listCustomer: listCustomer
+        });
+      }
     }
-   };
-    showListCustomer = type => {
-      this.setState({visibled: true})
-      this.setState({countCustomer :this.state.listTypeCustomer.filter(vl => vl.type_customers === type)[0].numbers});
-    };
-  onChangePage(pageNumber) {
-    console.log("Page: ", pageNumber);
-  }
+  };
+  showListCustomer = type => {
+    this.setState({ visibled: true })
+    const datafilterType = this.state.listTypeCustomer.filter(vl => vl.type_customers === type)
+    const type_customers = datafilterType[0].key
+    this.setState({ countCustomer: datafilterType[0].numbers, type_customers: type_customers });
+    this.props.getListCustomer({ type_customers: type_customers, page_number: this.state.pageNumber })
+  };
 
   render() {
-    console.log(this.state.countCustomer, "listType");
+    //  console.log(this.state.type_customers, "listType");
     // console.log(this.state.listFilter, "listFilter");
-
+    const {type_customers} = this.state
     return (
       <div className="list_type_customer">
         <Title level={3}>LIST TYPE CUSTOMER</Title>
@@ -122,15 +140,18 @@ class ListCustomer extends Component {
         >
           <Table
             columns={this.columns[1]}
-          //  dataSource={this.state.listFilter}
+            dataSource={this.state.listCustomer}
             pagination={false}
           />
           <Pagination
             style={{ padding: 10, textAlign: "center" }}
             showQuickJumper
-            defaultCurrent={2}
+            defaultCurrent={this.state.pageNumber}
             total={this.state.countCustomer}
-            onChange={this.onChangePage}
+            onChange={pageNumber => {
+              this.setState({pageNumber: pageNumber})
+              this.props.getListCustomer({ type_customers: type_customers, page_number: pageNumber })
+            }}
           />
         </Modal>
       </div>
@@ -148,7 +169,10 @@ const mapDispatchToProps = dispatch => {
   return {
     getListTypeCustomer: () => {
       dispatch(getAction.action.getListTypeCustomer());
-    }
+    },
+    getListCustomer: (infoPage) => {
+      dispatch(getAction.action.getListCustomer(infoPage));
+    },
   };
 };
 
